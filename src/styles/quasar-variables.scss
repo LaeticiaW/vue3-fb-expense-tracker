@@ -1,0 +1,23 @@
+$primary: #005da1;
+$secondary: #d8ebf7;
+$accent: #9c27b0;
+$dark: #1d1d1d;
+$positive: #21ba45;
+$negative: #c10015;
+$info: #31ccec;
+$warning: #f2c037;
+
+$secondary-border: #d1dce4;
+
+.text-primary {
+  color: $primary;
+}
+
+.text-secondary {
+  color: $secondary;
+}
+
+// .bg-filter {
+//   background-color: $filter;
+//   border: solid 1px $filter-border;
+// }

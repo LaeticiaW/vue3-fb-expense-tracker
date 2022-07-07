@@ -1,0 +1,24 @@
+{
+  "root": true,
+  "env": {
+    "node": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "@vue/typescript/recommended",
+    "plugin:vue/vue3-recommended",
+    "@vue/prettier"
+  ],
+  "parserOptions": {
+    "ecmaVersion": "latest"
+  },
+  "plugins": [],
+  "rules": {
+    "vue/multi-word-component-names": "off",
+    "vue/valid-v-slot": ["error", { "allowModifiers": true }],
+    "vue/v-on-event-hyphenation": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-non-null-assertion": "off",
+    "max-len": ["error", { "code": 100 }]
+  }
+}
