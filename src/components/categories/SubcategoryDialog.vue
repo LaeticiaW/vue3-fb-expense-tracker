@@ -63,7 +63,7 @@
 
         <q-separator />
 
-        <q-card-actions>
+        <q-card-actions align="right">
           <q-btn flat color="primary" @click="close">Cancel</q-btn>
           <q-btn flat color="primary" @click="save">Save</q-btn>
         </q-card-actions>
@@ -75,7 +75,7 @@
 <script setup lang="ts">
   import { ref, computed } from 'vue'
   import CategoryService from '@/services/category'
-  import { cloneDeep } from 'lodash-core'
+  import { cloneDeep } from 'lodash-es'
   import { Category, Subcategory } from '@/types/category'
   import ValidationUtil from '@/util/validation'
   import { v4 as uuidv4 } from 'uuid'

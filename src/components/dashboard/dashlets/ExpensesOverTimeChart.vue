@@ -7,8 +7,8 @@
     </template>
     <!-- Dashlet Content -->
     <template #content>
-      <div v-if="chartOptions" class="content-container">
-        <div class="chart-container">
+      <div v-if="chartOptions" class="content-container relative-position full-height">
+        <div class="chart-container relative-position full-height">
           <highcharts :options="chartOptions" />
         </div>
       </div>
@@ -17,10 +17,8 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, reactive, computed, ComputedRef } from 'vue'
-  import { GridItemData } from '@/types/vue3-grid-layout.d'
+  import { ref, computed, ComputedRef } from 'vue'
   import Dashlet from '@/components/dashboard/Dashlet.vue'
-  import Util from '@/services/util'
   import DateRangeInput from '@/components/common/DateRangeInput.vue'
   import dayjs from 'dayjs'
   import { TimeSeries } from '@/types/chart'
@@ -28,9 +26,10 @@
   import { useTimeSeriesChart } from '@/hooks/chart/useTimeSeriesChart'
   import { QueryResponse } from '@/types/query'
   import { useNotify } from '@/hooks/useNotify'
+  import { DashletOptions } from '@/types/dashboard'
 
   defineProps<{
-    options: GridItemData
+    options: DashletOptions
   }>()
 
   const filter = {
@@ -56,33 +55,8 @@
 </script>
 
 <style lang="scss" scoped>
-  .content-container {
-    position: relative;
-    height: 100%;
-
-    .chart-container {
-      position: relative;
-      height: 100%;
-
-      :deep(div[data-highcharts-chart]) {
-        position: relative;
-        height: 100% !important;
-        width: 100%;
-      }
-    }
-  }
-
   .filter-input {
     width: 120px !important;
     margin-right: 12px;
-  }
-
-  .chart-bottom-text {
-    position: absolute;
-    bottom: -24px;
-    right: 4px;
-    z-index: 5;
-    opacity: 1;
-    background-color: #ffffff;
   }
 </style>

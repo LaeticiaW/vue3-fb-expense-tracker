@@ -1,13 +1,14 @@
 import { ref, watch, computed, ComputedRef, UnwrapRef } from 'vue'
 import { QueryResponse, QueryOptions } from '@/types/query'
 
-export function useQuery<Data, Filter = any>(
+export function useQuery<Data, Filter = void>(
   options: QueryOptions<Data, Filter>
 ): ComputedRef<QueryResponse<Data>> {
   const queryResponse = ref<QueryResponse<Data>>({
     data: options.initialState,
     isLoading: true,
     error: undefined,
+    internalError: undefined,
     fetch: async () => {
       return
     },
@@ -20,7 +21,8 @@ export function useQuery<Data, Filter = any>(
   // Retrieve the data
   const getData = async () => {
     queryResponse.value.isLoading = true
-    queryResponse.value.error = ''
+    queryResponse.value.error = undefined
+    queryResponse.value.internalError = undefined
     try {
       queryResponse.value.error = undefined
       let data: Data
@@ -28,13 +30,12 @@ export function useQuery<Data, Filter = any>(
         data = await options.promise(options.filter)
         console.info('Query done')
       } else {
-        // data = await (options.promise as () => Promise<Data>)()
-        data = await options.promise(undefined as any)
+        data = await (options.promise as () => Promise<Data>)()
       }
       queryResponse.value.data = data as UnwrapRef<Data>
     } catch (err) {
       console.error('Error retrieving query data:', err)
-      queryResponse.value.error = 'Error retrieving data'
+      queryResponse.value.error = 'An error occurred retrieving data'
       queryResponse.value.internalError = err
       throw err
     } finally {
@@ -68,6 +69,7 @@ export function useQuery<Data, Filter = any>(
       data: queryResponse.value.data as Data,
       isLoading: queryResponse.value.isLoading,
       error: queryResponse.value.error,
+      internalError: queryResponse.value.internalError,
       fetch: fetch,
     }
   })

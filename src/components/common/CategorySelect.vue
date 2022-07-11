@@ -9,7 +9,7 @@
       :label="label"
       :option-label="itemText"
       :option-value="itemValue"
-      style="width: 200px"
+      style="width: 208px"
       :bg-color="bgColor"
       @update:modelValue="onChange"
     >

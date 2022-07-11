@@ -3,8 +3,25 @@
     <!-- App Bar -->
     <q-header elevated class="secondary q-pa-sm">
       <q-toolbar>
-        <q-btn flat round dense icon="mdi-menu" @click="navItemClicked" />
+        <q-btn v-if="isLoggedIn" flat round dense icon="mdi-menu" @click="navItemClicked" />
         <q-toolbar-title>Expense Tracker</q-toolbar-title>
+        <q-space />
+
+        <q-btn v-if="isLoggedIn" round>
+          <q-avatar v-ripple:primary color="white" text-color="primary">{{
+            avatarLetter
+          }}</q-avatar>
+          <q-menu auto-close bottom left>
+            <q-list dense>
+              <q-item clickable @click="logout">
+                <q-item-section>Logout</q-item-section>
+              </q-item>
+              <q-item v-if="loggedInUserId === 'admin'" clickable @click="reloadData">
+                <q-item-section>Reload Demo Data</q-item-section>
+              </q-item>
+            </q-list>
+          </q-menu>
+        </q-btn>
       </q-toolbar>
     </q-header>
 
@@ -21,7 +38,7 @@
         <q-list class="q-pa-sm">
           <template v-for="item in navRoutes" :key="item.name">
             <q-item
-              v-ripple
+              q-ripple
               clickable
               :active="item.name === 'Outbox'"
               :to="{ name: item.name }"
@@ -41,61 +58,68 @@
   </div>
 </template>
 
-<script>
-  import { defineComponent } from 'vue'
+<script setup lang="ts">
+  import { ref, computed } from 'vue'
   import { Routes } from '@/router'
+  import { useUserStore } from '@/store/user'
+  import { useRouter } from 'vue-router'
+  import { useDialog } from '@/hooks/useDialog'
+  import { useNotify } from '@/hooks/useNotify'
+  import ReloadService from '@/services/reload'
 
-  export default defineComponent({
-    name: 'AppBar',
+  const navDrawerOpen = ref<boolean>(false)
 
-    data() {
-      return {
-        navDrawerOpen: null,
-      }
-    },
+  const userStore = useUserStore()
+  const router = useRouter()
+  const { showDialog } = useDialog()
+  const { showNotify } = useNotify()
 
-    computed: {
-      navRoutes() {
-        // only return routes that should show up in the navigation drawer
-        return Routes.filter((route) => !route.meta.hidden)
-      },
-      avatarLetter() {
-        // if (
-        //   this.$store.state.loggedInUserId &&
-        //   this.$store.state.currentUser &&
-        //   this.$store.state.currentUser.userId
-        // ) {
-        //   return this.$store.state.currentUser.userId.substr(0, 1).toUpperCase()
-        // }
-        return ''
-      },
-      isLoggedIn() {
-        // return this.$store.state.loggedInUserId !== null
-        return true
-      },
-      loggedInUserId() {
-        // return this.$store.state.loggedInUserId
-        return 'admin1'
-      },
-    },
-
-    methods: {
-      /*
-       * Toggle the nav drawer
-       */
-      navItemClicked() {
-        this.navDrawerOpen = !this.navDrawerOpen
-      },
-
-      /*
-       * Logout user
-       */
-      logout() {
-        // this.$store.dispatch('logout')
-        // this.$router.push({ name: 'Login' })
-      },
-    },
+  const navRoutes = computed(() => {
+    // only return routes that should show up in the navigation drawer
+    return Routes.filter((route) => !route.meta.hidden)
   })
+
+  const avatarLetter = computed(() => {
+    if (userStore.loggedInUserId && userStore.currentUser && userStore.currentUser.userId) {
+      return userStore.currentUser.userId.substring(0, 1).toUpperCase()
+    }
+    return ''
+  })
+
+  const isLoggedIn = computed(() => {
+    return userStore.loggedInUserId !== null
+  })
+
+  const loggedInUserId = computed(() => {
+    return userStore.loggedInUserId
+  })
+
+  // Toggle the nav drawer
+  function navItemClicked() {
+    navDrawerOpen.value = !navDrawerOpen.value
+  }
+
+  // Logout user
+  function logout() {
+    userStore.logout()
+    router.push({ name: 'Login' })
+  }
+
+  //Reload the demo category and expense data into Firebase
+  async function reloadData() {
+    showDialog({
+      title: 'Confirm Reload Data',
+      message: `Are you sure you want to reload the category and expense data?`,
+    }).onOk(async () => {
+      try {
+        await ReloadService.reloadCategoryData()
+        await ReloadService.reloadExpenseData()
+      } catch (e) {
+        console.error('Error reloading category and expense demo data:', e)
+        showNotify({ message: 'Error reloading demo data' })
+      }
+    })
+  }
 </script>
 
 <style lang="scss" scoped>

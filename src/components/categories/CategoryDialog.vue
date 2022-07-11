@@ -60,7 +60,7 @@
 
       <q-separator />
 
-      <q-card-actions>
+      <q-card-actions align="right">
         <q-btn flat color="primary" @click="close">Cancel</q-btn>
         <q-btn flat color="primary" :disabled="!tempCategory.name" @click="save">Save</q-btn>
       </q-card-actions>
@@ -72,7 +72,7 @@
   import { ref, computed } from 'vue'
   import CategoryService from '@/services/category'
   import { v4 as uuidv4 } from 'uuid'
-  import { cloneDeep } from 'lodash'
+  import { cloneDeep } from 'lodash-es'
   import { Category } from '@/types/category'
   import ValidationUtil from '@/util/validation'
   import { QForm } from 'quasar'
@@ -113,7 +113,7 @@
       emit('category-updated', tempCategory.value)
       // Close the dialog
       close()
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (error && typeof error === 'string' && error.indexOf('Duplicate') !== -1) {
         dialogMessage.value = 'Category name is not unique'
       } else {

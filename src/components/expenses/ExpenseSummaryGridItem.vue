@@ -41,12 +41,12 @@
 
 <script setup lang="ts">
   import { computed } from 'vue'
-  import { Expense } from '@/types/expense'
+  import { ExpenseSummary } from '@/types/expense'
   import { GridItemProps } from '@/types/table'
   import { QTableColumn } from 'quasar'
 
   const props = defineProps<{
-    itemProps: GridItemProps<Expense>
+    itemProps: GridItemProps<ExpenseSummary>
   }>()
 
   const emit = defineEmits(['update', 'delete'])

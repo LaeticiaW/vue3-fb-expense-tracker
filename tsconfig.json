@@ -17,7 +17,6 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "types": ["vuetify"],
     "typeRoots": ["./node-modules/@types", "./types"],
     "noImplicitAny": false
   },

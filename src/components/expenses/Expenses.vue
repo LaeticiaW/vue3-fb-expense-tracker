@@ -1,6 +1,7 @@
 <template>
   <div class="page">
     <page-header title="Manage Expenses" />
+    <page-error :error="expensesQuery.error ?? selectCategoriesQuery.error" />
 
     <div>
       <!-- Filter -->
@@ -17,6 +18,7 @@
               :model-value="filter.categoryIds"
               :items="selectCategoriesQuery.data"
               label="Category"
+              class="category-dropdown"
               @update:modelValue="filter.categoryIds.value = $event"
             />
           </div>
@@ -39,7 +41,7 @@
         flat
         :table-rows="tableRows"
         :table-columns="tableColumns"
-        row-key="_id"
+        row-key="id"
         :row-text="rowText"
         @row-click="rowClicked"
       >
@@ -83,24 +85,25 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, computed, ComputedRef } from 'vue'
+  import { ref, computed } from 'vue'
   import dayjs from 'dayjs'
+  import Table from '@/components/common/Table.vue'
   import TableFilter from '@/components/common/TableFilter.vue'
   import DateRangeInput from '@/components/common/DateRangeInput.vue'
   import PageHeader from '@/components/common/PageHeader.vue'
+  import PageError from '@/components/common/PageError.vue'
   import CategorySelect from '@/components/common/CategorySelect.vue'
   import useExpenses from '@/hooks/data/useExpenses'
   import useCategorySelect from '@/hooks/data/useCategorySelect'
   import ExpenseDialog from '@/components/expenses/ExpenseDialog.vue'
   import ExpenseGridItem from '@/components/expenses/ExpenseGridItem.vue'
+  import ExpenseService from '@/services/expense'
   import { QTableColumn } from 'quasar'
-  import { QueryResponse } from '@/types/query'
-  import { SelectCategory } from '@/types/category'
   import { Expense } from '@/types/expense'
   import { useNotify } from '@/hooks/useNotify'
   import { useDialog } from '@/hooks/useDialog'
   import { useLoading } from '@/hooks/useLoading'
-  import Table from '@/components/common/Table.vue'
+
   import { ExpenseFilter } from '@/types/expense'
 
   const filter: ExpenseFilter = {
@@ -108,16 +111,13 @@
     endDate: ref(dayjs().format('YYYY-MM-DD')),
     categoryIds: ref<string[]>([]),
   }
-
   const showExpenseDialog = ref(false)
   const selectedExpense = ref()
   const addExpense = ref(false)
-
   const defaultCol: Omit<QTableColumn<Expense>, 'name' | 'label' | 'field'> = {
     align: 'left',
     sortable: true,
   }
-
   const tableColumns: QTableColumn<Expense>[] = [
     { ...defaultCol, name: 'trxDate', label: 'Date', field: 'trxDate' },
     { ...defaultCol, name: 'description', label: 'Description', field: 'description' },
@@ -132,41 +132,34 @@
       sortable: false,
       format: (val) => val.toFixed(2),
     },
-    { name: 'actions', label: 'Actions', field: '_id', align: 'left' },
+    { name: 'actions', label: 'Actions', field: 'id', align: 'left' },
   ]
 
   const { showNotify } = useNotify()
   const { showDialog } = useDialog()
   const { queryLoading } = useLoading()
 
-  // Retrieve the expense and category data
-  let expensesQuery: ComputedRef<QueryResponse<Expense[]>>
-  let selectCategoriesQuery: ComputedRef<QueryResponse<SelectCategory[]>>
-  try {
-    expensesQuery = useExpenses(filter)
-    selectCategoriesQuery = useCategorySelect()
+  // Retrieve the expenses and category select data
+  const expensesQuery = useExpenses(filter)
+  const selectCategoriesQuery = useCategorySelect()
+  queryLoading([expensesQuery, selectCategoriesQuery])
 
-    // queryLoading([expensesQuery, selectCategoriesQuery])
-    queryLoading(expensesQuery)
-    queryLoading(selectCategoriesQuery)
-  } catch (err) {
-    showNotify({ message: 'Error retrieving data' })
-  }
-
+  // Table data rows
   const tableRows = computed(() => {
-    return expensesQuery?.value?.data ?? []
+    return expensesQuery.value.data ?? []
   })
 
+  // Table footer text
   const rowText = computed(() => {
     return tableRows.value.length !== 1 ? 'rows' : 'row'
   })
 
-  // When a table row is clicked, save that expense as the selectedExpense
-  function rowClicked(evt, expense) {
+  // When a table row is clicked, set the selectedExpense
+  function rowClicked(evt: Event, expense: Expense) {
     selectedExpense.value = expense
   }
 
-  // Display the add expense dialog
+  // Display the expense dialog for create
   function showAddExpenseDialog() {
     showExpenseDialog.value = true
     addExpense.value = true
@@ -178,7 +171,7 @@
     }
   }
 
-  // Display the update expense dialog
+  // Display the expense dialog for update
   function updateExpense(expense: Expense) {
     selectedExpense.value = expense
     showExpenseDialog.value = true
@@ -192,11 +185,10 @@
       message: `Are you sure you want to delete expense ${expense.amount}?`,
     }).onOk(async () => {
       try {
-        // NEED TO DELETE HERE
+        ExpenseService.deleteExpense(expense.id!)
         expensesQuery.value.fetch()
         showNotify({ message: 'Expense deleted successfully', color: 'primary' })
       } catch (error) {
-        console.error('Error deleting expenses:', error)
         showNotify({ message: 'Error deleting the expense' })
       }
     })
@@ -212,3 +204,11 @@
     }
   }
 </script>
+
+<style lang="scss" scoped>
+  @media (max-width: $breakpoint-xs-max) {
+    .category-dropdown {
+      margin-top: 4px;
+    }
+  }
+</style>

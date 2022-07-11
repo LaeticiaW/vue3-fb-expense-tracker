@@ -1,12 +1,13 @@
 <template>
   <div class="page">
     <page-header title="Categories" />
+    <page-error :error="categoriesQuery.error" />
 
     <div>
       <!--
         Grid layout with single row and two columns, left column for tree view,
         right column for details view
-        -->
+      -->
       <div class="row" style="height: calc(100vh - 160px)" align="start" align-content="start">
         <div class="tree-container full-height col-xs-12 col-sm-6 col-md-5">
           <CategoryTree
@@ -38,50 +39,38 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, computed, ComputedRef } from 'vue'
+  import { ref, computed } from 'vue'
   import PageHeader from '@/components/common/PageHeader.vue'
+  import PageError from '@/components/common/PageError.vue'
   import CategoryDetails from '@/components/categories/CategoryDetails.vue'
   import SubcategoryDetails from '@/components/categories/SubcategoryDetails.vue'
-  import { useNotify } from '@/hooks/useNotify'
   import { useLoading } from '@/hooks/useLoading'
   import { Category, Subcategory } from '@/types/category'
   import useCategories from '@/hooks/data/useCategories'
-  import { QueryResponse } from '@/types/query'
   import CategoryTree from '@/components/categories/CategoryTree.vue'
   import { isSubcategory } from '@/util/category'
 
   const selectedItem = ref<Category | Subcategory>()
   const parentCategory = ref<Category>()
 
-  const { showNotify } = useNotify()
   const { queryLoading } = useLoading()
 
   // Retrieve the categories data
-  let categoriesQuery: ComputedRef<QueryResponse<Category[]>>
-  try {
-    categoriesQuery = useCategories()
-    queryLoading(categoriesQuery)
-  } catch (err) {
-    showNotify({ message: 'Error retrieving category data:' + err })
-  }
+  const categoriesQuery = useCategories()
+  queryLoading([categoriesQuery])
 
+  // Category data
   const categories = computed((): Category[] => {
     return categoriesQuery?.value?.data || []
   })
 
-  // Refresh the categories list
+  // Refresh the categories data
   async function refreshCategories(cat: Category, subcat?: Subcategory) {
-    try {
-      categoriesQuery.value.fetch()
-
-      if (subcat) {
-        onItemSelected(subcat)
-      } else {
-        onItemSelected(cat)
-      }
-    } catch (error) {
-      console.error('Error retrieving categories:', error)
-      showNotify({ message: 'Error retrieving the categories' })
+    categoriesQuery.value.fetch()
+    if (subcat) {
+      onItemSelected(subcat)
+    } else {
+      onItemSelected(cat)
     }
   }
 
@@ -113,9 +102,6 @@
     .tree-container {
       max-height: 300px;
       margin-bottom: 8px;
-    }
-    .details-container {
-      padding: 8px 0px;
     }
   }
 </style>

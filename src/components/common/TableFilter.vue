@@ -6,3 +6,11 @@
     <slot name="actions" />
   </q-toolbar>
 </template>
+
+<style lang="scss" scoped>
+  @media (max-width: $breakpoint-xs-max) {
+    .filter {
+      margin-bottom: 12px;
+    }
+  }
+</style>

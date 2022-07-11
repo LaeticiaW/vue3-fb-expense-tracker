@@ -1,20 +1,12 @@
-import {
-  db,
-  doc,
-  collection,
-  getDoc,
-  getDocs,
-  query,
-} from '@/firebase/firebase'
+import { db, doc, collection, getDoc, getDocs, query } from '@/firebase/firebase'
+import { User } from '@/types/user'
 
 export default {
-  userUrl: 'http://localhost:3000/user/',
-
   /*
    * Retrieve the user list
    */
-  async getUsers() {
-    const users = []
+  async getUsers(): Promise<User[]> {
+    const users: User[] = []
 
     try {
       const userQuery = query(collection(db, 'users'))
@@ -33,12 +25,12 @@ export default {
    * Retrieve a specific user by user id
    * @param {number} userId - user id
    */
-  async getUser(userId) {
+  async getUser(userId: string): Promise<User> {
     const docRef = doc(db, 'users', userId)
     const docSnapshot = await getDoc(docRef)
 
     if (docSnapshot.exists()) {
-      return docSnapshot.data()
+      return docSnapshot.data() as User
     } else {
       const msg = `User ${userId} not found`
       console.error(msg)

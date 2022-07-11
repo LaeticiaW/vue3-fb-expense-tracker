@@ -29,7 +29,6 @@ export default {
         })
       }
 
-      console.log('Service categories:', categories)
       return categories
     } catch (error) {
       console.error('CategoryService.getCategories error:', error)
@@ -93,7 +92,6 @@ export default {
    * @param {object} categories - categories object to create
    */
   async createCategory(category: Category) {
-    console.log('create:', category)
     try {
       // Verify this category name is not a duplicate
       const isUnique = await this.isCategoryNameUnique(category)
@@ -115,7 +113,6 @@ export default {
    * @param {object} categories - categories object to update
    */
   async updateCategory(category: Category, addSubcategoryName?: string) {
-    console.log('update:', category)
     try {
       // If category name has changed, verify it is not a duplicate
       const isUnique = await this.isCategoryNameUnique(category)

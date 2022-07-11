@@ -62,7 +62,6 @@
 <script setup lang="ts">
   import { ref, Ref } from 'vue'
   import dayjs from 'dayjs'
-  import 'vue-datepicker-next/index.css'
   import { QMenu } from 'quasar'
 
   // Props

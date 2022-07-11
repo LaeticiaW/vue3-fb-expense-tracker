@@ -6,7 +6,7 @@ import { ImportDetails } from '@/types/import'
 import CategoryService from '@/services/category'
 import dayjs from 'dayjs'
 import { v4 as uuidv4 } from 'uuid'
-import { cloneDeep } from 'lodash'
+import { cloneDeep } from 'lodash-es'
 
 export default {
   /*
@@ -65,7 +65,7 @@ export default {
    * @param {object} expense - expense object to save
    */
   saveExpense(expense: Expense) {
-    if (expense._id === undefined) {
+    if (expense.id === undefined) {
       return this.createExpense(expense)
     }
     return this.updateExpense(expense)
@@ -77,11 +77,11 @@ export default {
    */
   async createExpense(expense: Expense) {
     try {
-      expense._id = uuidv4()
+      expense.id = uuidv4()
       expense.trxYear = dayjs(expense.trxDate).year()
       expense.trxMonth = dayjs(expense.trxDate).month() + 1
-      if (typeof expense._id === 'string') {
-        await setDoc(doc(db, 'expenses', expense._id), expense)
+      if (typeof expense.id === 'string') {
+        await setDoc(doc(db, 'expenses', expense.id), expense)
       }
     } catch (error) {
       console.error('ExpenseService.createExpense error', error)
@@ -97,8 +97,8 @@ export default {
     try {
       expense.trxYear = dayjs(expense.trxDate).year()
       expense.trxMonth = dayjs(expense.trxDate).month() + 1
-      if (typeof expense._id === 'string') {
-        await setDoc(doc(db, 'expenses', expense._id), expense)
+      if (typeof expense.id === 'string') {
+        await setDoc(doc(db, 'expenses', expense.id), expense)
       }
     } catch (error) {
       console.error('ExpenseService.updateExpense error', error)
@@ -124,7 +124,7 @@ export default {
    * @param {array} expenses - array of expense objects
    * @param {object} importDetails - details of the import
    */
-  async importExpenses(expenses: any[], importDetails: ImportDetails) {
+  async importExpenses(expenses: Expense[], importDetails: ImportDetails) {
     const importExpenses = cloneDeep(expenses)
 
     // Normalize the trxDate to 'YYYY-MM-DD' and remove $ from amount
@@ -143,15 +143,15 @@ export default {
       const batch = writeBatch(db)
 
       // Insert the import summary document
-      importDetails._id = uuidv4()
-      batch.set(doc(db, 'imports', importDetails._id), importDetails)
+      importDetails.id = uuidv4()
+      batch.set(doc(db, 'imports', importDetails.id), importDetails)
 
       // Insert each expense document
       importExpenses.forEach((exp: Expense) => {
-        exp._id = uuidv4()
-        exp.importId = importDetails._id
-        if (typeof exp._id === 'string') {
-          batch.set(doc(db, 'expenses', exp._id), exp)
+        exp.id = uuidv4()
+        exp.importId = importDetails.id
+        if (typeof exp.id === 'string') {
+          batch.set(doc(db, 'expenses', exp.id), exp)
         }
       })
 
@@ -187,8 +187,8 @@ export default {
 
     // Delete each expense
     expenses.forEach((exp) => {
-      if (typeof exp._id === 'string') {
-        batch.delete(doc(db, 'expenses', exp._id))
+      if (typeof exp.id === 'string') {
+        batch.delete(doc(db, 'expenses', exp.id))
       }
     })
 
@@ -197,7 +197,7 @@ export default {
   },
 
   /*
-   * Determine if any expenses are associated to a specified category
+   * Determine if expenses are associated to a specified category
    */
   async isCategoryInUse(categoryId: string): Promise<boolean> {
     const expenseQuery = query(
@@ -212,7 +212,7 @@ export default {
   },
 
   /*
-   * Determine if any expenses are associated to a specified subcategory
+   * Determine if expenses are associated to a specified subcategory
    */
   async isSubcategoryInUse(subcategoryId: string): Promise<boolean> {
     const expenseQuery = query(

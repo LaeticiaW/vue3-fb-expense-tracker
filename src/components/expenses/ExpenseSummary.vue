@@ -1,6 +1,7 @@
 <template>
   <div class="page">
     <page-header title="Expense Summary" />
+    <page-error :error="expenseTotalsQuery.error ?? selectCategoriesQuery.error" />
 
     <div>
       <!-- Filter -->
@@ -18,6 +19,7 @@
               :model-value="filter.categoryIds"
               :items="selectCategoriesQuery.data"
               label="Category"
+              class="category-dropdown"
               @update:modelValue="filter.categoryIds.value = $event"
             />
           </div>
@@ -30,6 +32,8 @@
         :table-columns="tableColumns"
         row-key="categoryId"
         :row-text="rowText"
+        footer-label="Total Amount"
+        :footer-value="totalExpensesAmount"
         @row-click="rowClicked"
       >
         <template #header="props">
@@ -58,7 +62,7 @@
               {{ col.value }}
             </q-td>
           </q-tr>
-          <q-tr v-show="props.expand" :props="props">
+          <q-tr v-show="props.expand" :props="props" class="expanded-row">
             <td colspan="4" class="expanded-area">
               <table class="subcategory-table full-width">
                 <tbody>
@@ -77,24 +81,11 @@
             </td>
           </q-tr>
         </template>
-        <!--
+
         <template #item="props">
-
           <ExpenseSummaryGridItem :item-props="props" />
-
         </template>
-        -->
       </Table>
-
-      <!--
-      <div class="table-footer" style="position: relative">
-        <v-toolbar flat dense>
-          <span>{{ expenseTotalsQuery.data.length }} {{ rowText }}</span>
-          <v-spacer />
-          <span>Total Amount: {{ totalExpensesAmount }}</span>
-        </v-toolbar>
-      </div>
-      -->
     </div>
   </div>
 </template>
@@ -103,16 +94,16 @@
   import { ref, computed, ComputedRef } from 'vue'
   import TableFilter from '@/components/common/TableFilter.vue'
   import DateRangeInput from '@/components/common/DateRangeInput.vue'
+  import ExpenseSummaryGridItem from '@/components/expenses/ExpenseSummaryGridItem.vue'
   import dayjs from 'dayjs'
   import PageHeader from '@/components/common/PageHeader.vue'
+  import PageError from '@/components/common/PageError.vue'
   import CategorySelect from '@/components/common/CategorySelect.vue'
   import { useNotify } from '@/hooks/useNotify'
   import { ExpenseFilter, ExpenseSummary, ExpenseTotal } from '@/types/expense'
   import useCategorySelect from '@/hooks/data/useCategorySelect'
   import useExpenseTotals from '@/hooks/data/useExpenseTotals'
   import { QTableColumn } from 'quasar'
-  import { QueryResponse } from '@/types/query'
-  import { SelectCategory } from '@/types/category'
   import { useLoading } from '@/hooks/useLoading'
   import Table from '@/components/common/Table.vue'
 
@@ -151,34 +142,30 @@
   const { showNotify } = useNotify()
   const { queryLoading } = useLoading()
 
-  let expenseTotalsQuery: ComputedRef<QueryResponse<ExpenseTotal[]>>
-  let selectCategoriesQuery: ComputedRef<QueryResponse<SelectCategory[]>>
-  try {
-    expenseTotalsQuery = useExpenseTotals(filter)
-    selectCategoriesQuery = useCategorySelect()
-    // queryLoading([expenseTotalsQuery, selectCategoriesQuery])
-    queryLoading(expenseTotalsQuery)
-    queryLoading(selectCategoriesQuery)
-  } catch (err) {
-    showNotify({ message: 'Error retrieving data' })
-  }
+  // Retrieve the expense totals and select category data
+  const expenseTotalsQuery = useExpenseTotals(filter)
+  const selectCategoriesQuery = useCategorySelect()
+  queryLoading([expenseTotalsQuery, selectCategoriesQuery])
 
-  const rowText = computed(() => {
-    return expenseTotalsQuery.value.data.length !== 1 ? 'rows' : 'row'
-  })
-
+  // Table data rows
   const tableRows = computed(() => {
     return expenseTotalsQuery?.value?.data ?? []
   })
 
+  // Table footer text
+  const rowText = computed(() => {
+    return tableRows.value.length !== 1 ? 'rows' : 'row'
+  })
+
   const totalExpensesAmount = computed(() => {
-    return expenseTotalsQuery.value.data.reduce(
+    const value = expenseTotalsQuery.value.data.reduce(
       (sum: number, cat: ExpenseTotal) => sum + Number(cat.totalAmount),
       0
     )
+    return value.toFixed(2)
   })
 
-  // Collapse any expanded row whenever new data is retrieved, put in watch?  computed?
+  // Collapse expanded rows whenever new data is retrieved, put in watch?  computed?
   // expanded.value.shift()
 
   // Handle manually expanding/collapsing rows on row click (vs expand icon click)
@@ -201,22 +188,31 @@
     padding-left: 24px;
     background-color: #e9e8f4;
   }
-  .expanded-area,
-  .expanded-area:hover {
-    // background-color: #e9e8f4;
+
+  .expanded-row {
     background-color: $blue-grey-1;
-    .subcategory-table {
-      td {
-        // background-color: #e9e8f4;
-        background-color: $blue-grey-1;
-      }
-      tr:hover,
-      td:hover {
-        background-color: $blue-grey-1 !important;
-      }
-      .subcategory-amount {
-        padding-right: 0px !important;
-      }
+  }
+  expanded-row:hover {
+    background-color: #f7f7f7;
+  }
+  td.expanded-area {
+    border-width: 0px !important;
+    border-style: none !important;
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+  }
+  // Prevent double border above footer
+  .q-tr:nth-last-child(2) .q-td {
+    border-width: 0px !important;
+    border-style: none !important;
+  }
+  .subcategory-amount {
+    padding-right: 0px !important;
+  }
+
+  @media (max-width: $breakpoint-xs-max) {
+    .category-dropdown {
+      margin-top: 4px;
     }
   }
 </style>

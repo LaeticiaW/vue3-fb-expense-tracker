@@ -8,8 +8,8 @@
 
     <!-- Dashlet Content -->
     <template #content>
-      <div v-if="chartOptions" class="content-container">
-        <div class="chart-container">
+      <div v-if="chartOptions" class="content-container relative-position full-height">
+        <div class="chart-container relative-position full-height">
           <highcharts :options="chartOptions" />
         </div>
         <div class="chart-bottom-text">Total Expenses: ${{ totalExpensesAmount?.toFixed(2) }}</div>
@@ -19,28 +19,25 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, reactive, computed, ComputedRef } from 'vue'
+  import { ref, computed, ComputedRef } from 'vue'
   import Dashlet from '@/components/dashboard/Dashlet.vue'
   import DateRangeInput from '@/components/common/DateRangeInput.vue'
-  import { GridItemData } from '@/types/vue3-grid-layout.d'
   import { PieChartSeries, DrillDownSeries } from '@/types/chart'
   import { usePieChart } from '@/hooks/chart/usePieChart'
   import useExpenseTotals from '@/hooks/data/useExpenseTotals'
   import { QueryResponse } from '@/types/query'
   import { ExpenseTotal } from '@/types/expense'
   import { useNotify } from '@/hooks/useNotify'
-  import Util from '@/services/util'
   import dayjs from 'dayjs'
+  import { DashletOptions } from '@/types/dashboard'
 
   defineProps<{
-    options: GridItemData
+    options: DashletOptions
   }>()
 
   const filter = {
     startDate: ref(dayjs().startOf('year').format('YYYY-MM-DD')),
     endDate: ref(dayjs().format('YYYY-MM-DD')),
-    // startDate: ref(dayjs().startOf('year').toDate()),
-    // endDate: ref(new Date()),
     categoryIds: ref([]),
   }
 
@@ -95,22 +92,6 @@
 </script>
 
 <style lang="scss" scoped>
-  .content-container {
-    position: relative;
-    height: 100%;
-
-    .chart-container {
-      position: relative;
-      height: 100%;
-
-      :deep(div[data-highcharts-chart]) {
-        position: relative;
-        height: 100% !important;
-        width: 100%;
-      }
-    }
-  }
-
   .filter-input {
     width: 120px !important;
     margin-right: 12px;
@@ -118,10 +99,7 @@
 
   .chart-bottom-text {
     position: absolute;
-    bottom: -24px;
+    bottom: 24px;
     right: 4px;
-    z-index: 5;
-    opacity: 1;
-    background-color: #ffffff;
   }
 </style>

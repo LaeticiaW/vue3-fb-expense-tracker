@@ -113,7 +113,7 @@
       <q-separator />
 
       <q-card-actions align="right">
-        <q-btn flat color="blue-grey-5" class="cancel-button" @click="close">Cancel</q-btn>
+        <q-btn flat color="primary" class="cancel-button" @click="close">Cancel</q-btn>
         <q-btn flat color="primary" :disabled="!initialized" @click="importExpenses">Import</q-btn>
       </q-card-actions>
     </q-card>
@@ -313,8 +313,8 @@
     //   return undefined
     // }
 
-    // Set the expense categoryId and subcategoryId if the expense description matches
-    // any subcategory matchText
+    // Set the expense categoryId and subcategoryId if the expense description
+    // matches a subcategory matchText
     if (expense.description) {
       categoriesQuery.value.data.forEach((cat) => {
         if (cat.subcategories) {
@@ -323,7 +323,7 @@
               subcat.matchText.forEach((text) => {
                 const regex = new RegExp(text, 'i')
                 if (expense.description!.match(regex)) {
-                  expense.categoryId = cat._id
+                  expense.categoryId = cat.id
                   expense.subcategoryId = subcat.id
                 }
               })

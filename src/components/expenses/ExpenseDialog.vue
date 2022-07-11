@@ -102,7 +102,7 @@
       <q-separator />
 
       <q-card-actions align="right">
-        <q-btn flat color="blue-grey-5" class="cancel-button" @click="close">Cancel</q-btn>
+        <q-btn flat color="primary" class="cancel-button" @click="close">Cancel</q-btn>
         <q-btn flat color="primary" class="save-button" @click="save">Save</q-btn>
       </q-card-actions>
     </q-card>
@@ -115,7 +115,7 @@
   import { Expense } from '@/types/expense'
   import { Category, Subcategory } from '@/types/category'
   import dayjs from 'dayjs'
-  import { cloneDeep } from 'lodash'
+  import { cloneDeep } from 'lodash-es'
   import { QForm, QMenu } from 'quasar'
   import ValidationUtil from '@/util/validation'
   import useCategories from '@/hooks/data/useCategories'
@@ -139,7 +139,7 @@
   }
 
   const dialogTitle = computed(() => {
-    if (props.expense._id === undefined) {
+    if (props.expense.id === undefined) {
       return 'Create Expense'
     }
     return 'Update Expense'

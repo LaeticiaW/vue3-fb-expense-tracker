@@ -1,7 +1,7 @@
 import { Ref } from 'vue'
 
 export type Expense = {
-  _id?: string
+  id?: string
   categoryId?: string
   subcategoryId?: string
   importId?: string
@@ -14,7 +14,7 @@ export type Expense = {
   subcategoryName?: string
 }
 
-export type NewExpense = Omit<Expense, '_id' | 'trxYear' | 'trxMonth'>
+export type NewExpense = Omit<Expense, 'id' | 'trxYear' | 'trxMonth'>
 
 export type SubcategoryTotal = {
   subcategoryId: string

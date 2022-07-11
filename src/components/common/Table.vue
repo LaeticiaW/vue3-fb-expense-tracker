@@ -21,12 +21,15 @@
       </q-table>
     </div>
 
-    <div class="table-footer">{{ tableRows.length }} {{ rowText }}</div>
+    <div class="table-footer row">
+      <span>{{ tableRows.length }} {{ rowText }}</span>
+      <q-space />
+      <span v-if="footerLabel">{{ footerLabel }}: {{ footerValue }}</span>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { Ref, ComputedRef } from 'vue'
   import { useQuasar, QTableColumn } from 'quasar'
 
   type TablePagination = {
@@ -37,18 +40,22 @@
     rowsNumber?: number | undefined
   }
 
-  const props = withDefaults(
+  withDefaults(
     defineProps<{
-      tableRows: Record<string, any>[]
+      tableRows: Record<string, unknown>[]
       tableColumns: QTableColumn<any>[]
       rowKey: string
       pagination?: TablePagination | undefined
       rowText: string
+      footerLabel?: string
+      footerValue?: string | number
     }>(),
     {
       pagination: () => ({
         rowsPerPage: 0,
       }),
+      footerLabel: undefined,
+      footerValue: undefined,
     }
   )
 
@@ -56,17 +63,19 @@
 
   const $q = useQuasar()
 
-  function rowClicked(evt, rowObject: any) {
+  function rowClicked(evt: Event, rowObject: unknown) {
     emit('row-click', evt, rowObject)
   }
 </script>
 
 <style lang="scss" scoped>
   .table-container {
+    padding-left: 1px;
+    padding-right: 1px;
     border: solid 1px #ededed !important;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
-    height: calc(100vh - 305px);
+    max-height: calc(100vh - 280px);
     overflow: auto;
   }
 
@@ -79,5 +88,19 @@
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
     padding: 12px 16px;
+  }
+
+  @media (max-width: $breakpoint-xs-max) {
+    .table-container {
+      // height: calc(100vh - 240px);
+      height: auto;
+      border-style: none !important;
+      //border-top: none !important;
+      //border-bottom: none !important;
+    }
+    .q-card {
+      padding-top: 0px;
+      //border-left: solid 1px #ededed;
+    }
   }
 </style>

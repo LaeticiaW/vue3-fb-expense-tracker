@@ -1,5 +1,5 @@
 <template>
-  <div class="dashlet shadow-2">
+  <div class="dashlet shadow-2 position-relative full-height full-width">
     <q-toolbar class="text-primary">
       <q-toolbar-title>
         {{ options.dashletTitle }}
@@ -30,52 +30,50 @@
 </template>
 
 <script setup lang="ts">
-  /*
-   * This is a common Dashlet component used by all dashboard dashlets for a common look and feel
-   */
-  import { GridItemData } from '@/types/vue3-grid-layout'
   import { inject, ref, PropType } from 'vue'
+  import { DashletOptions, DashboardContext } from '@/types/dashboard'
 
   // Options contains vue-grid-item options plus component and dashletTitle properties
   const props = defineProps({
     options: {
-      type: Object as PropType<GridItemData>,
+      type: Object as PropType<DashletOptions>,
       required: true,
     },
   })
 
-  const dashboardContext: any = inject('dashboardContext')
+  const dashboardContext = inject<DashboardContext>('dashboardContext')
 
   const expanded = ref(false)
 
   // Maximize the dashlet
   const maximize = () => {
     expanded.value = true
-    dashboardContext.maximizeDashlet?.(props.options)
+    dashboardContext!.maximizeDashlet?.(props.options)
   }
 
   // Minimize the dashlet
   const minimize = () => {
     expanded.value = false
-    dashboardContext.minimizeDashlet?.()
+    dashboardContext!.minimizeDashlet?.()
   }
 </script>
 
 <style lang="scss" scoped>
-  .dashlet {
+  .dashlet-content {
+    padding: 0px 24px 12px 24px;
+    height: 350px;
+  }
+
+  :deep(.q-toolbar__title) {
+    font-size: 1rem !important;
+    line-height: 1 !important;
+    font-weight: 500;
+    min-width: 160px;
+  }
+
+  :deep(div[data-highcharts-chart]) {
     position: relative;
-    height: 100%;
-
-    .dashlet-content {
-      padding: 0px 24px 12px 24px;
-      height: calc(100% - 80px);
-    }
-
-    :deep(.q-toolbar__title) {
-      font-size: 1rem !important;
-      line-height: 1 !important;
-      font-weight: 500;
-      min-width: 160px;
-    }
+    height: 100% !important;
+    width: 100% !important;
   }
 </style>

@@ -1,7 +1,7 @@
 import { Ref } from 'vue'
 
 export type Import = {
-  _id: string
+  id: string
   description: string
   fileName: string
   importDate: string
@@ -14,7 +14,7 @@ export type ImportFilter = {
 }
 
 export type ImportDetails = {
-  _id?: string
+  id?: string
   importDate: string
   fileName: string
   description: string
