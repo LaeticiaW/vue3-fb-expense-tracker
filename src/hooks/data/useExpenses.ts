@@ -8,7 +8,6 @@ import { useQuery } from '@/hooks/data/useQuery'
  * Retrieves the expenses
  */
 export default function (filter: ExpenseFilter): ComputedRef<QueryResponse<Expense[]>> {
-  console.log('In useExpenses')
   const queryResponse = useQuery<Expense[], ExpenseFilter>({
     promise: ExpenseService.getExpenses,
     filter: filter,

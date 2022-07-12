@@ -8,7 +8,6 @@ import { useQuery } from '@/hooks/data/useQuery'
  * Retrieves the categories
  */
 export default function (options?: { runQuery?: boolean }): ComputedRef<QueryResponse<Category[]>> {
-  console.log('In useCategories')
   const queryResponse = useQuery<Category[]>({
     promise: CategoryService.getCategories,
     initialState: [],

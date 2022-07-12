@@ -11,7 +11,7 @@ export function useTimeSeriesChart(options: {
 }) {
   const chartOptions = ref()
 
-  const getChartOptions = (dataOptions) => {
+  function getChartOptions(dataOptions) {
     return {
       chart: {
         type: 'line',

@@ -10,7 +10,6 @@ import numeral from 'numeral'
  * Retrieves the expense totals by category
  */
 export default function (filter: ExpenseFilter): ComputedRef<QueryResponse<TimeSeries[]>> {
-  console.log('in useExpenseTimeSeries')
   const expensesQuery = useExpenses(filter)
 
   const expenseTimeSeries = computed(() => {
@@ -26,16 +25,24 @@ export default function (filter: ExpenseFilter): ComputedRef<QueryResponse<TimeS
     })
 
     // Group by categoryId, trxYear, trxMonth and sum the amount
+    const expenseSummaries = groupExpenseData(expenses)
+
+    // Format the data as a highcharts time series
+    return formatSeries(expenseSummaries)
+  })
+
+  // Group the expense data by category, year, month
+  function groupExpenseData(expenses: Expense[]) {
     const expenseSummaries: ExpenseSummary[] = []
     let prevCatId = ''
     let prevTrxYear: number
     let prevTrxMonth: number
     let expenseSummary: ExpenseSummary
-    expenses.forEach((exp, idx) => {
+    expenses.forEach((exp: Expense, idx: number) => {
       if (idx === 0) {
         expenseSummary = {
-          categoryId: exp.categoryId,
-          categoryName: exp.categoryName,
+          categoryId: exp.categoryId!,
+          categoryName: exp.categoryName!,
           trxYear: exp.trxYear!,
           trxMonth: exp.trxMonth!,
           totalAmount: exp.amount,
@@ -49,25 +56,28 @@ export default function (filter: ExpenseFilter): ComputedRef<QueryResponse<TimeS
       } else {
         expenseSummaries.push(expenseSummary)
         expenseSummary = {
-          categoryId: exp.categoryId,
-          categoryName: exp.categoryName,
+          categoryId: exp.categoryId!,
+          categoryName: exp.categoryName!,
           trxYear: exp.trxYear!,
           trxMonth: exp.trxMonth!,
           totalAmount: exp.amount,
         }
       }
-      prevCatId = exp.categoryId
+      prevCatId = exp.categoryId!
       prevTrxYear = exp.trxYear!
       prevTrxMonth = exp.trxMonth!
     })
+    return expenseSummaries
+  }
 
-    // Convert data to Highcharts time series format, one time series per category
+  // Format the expense summary data as a highcharts time series
+  function formatSeries(expenseSummaries: ExpenseSummary[]) {
     const series: TimeSeries[] = []
     let seriesObj: TimeSeries
     let prevCatName = ''
     let data: TimeSeriesData = []
     let dt
-    prevCatId = ''
+    let prevCatId = ''
     expenseSummaries.forEach((exp) => {
       if (exp.categoryId !== prevCatId && prevCatId !== '') {
         seriesObj = {
@@ -96,7 +106,7 @@ export default function (filter: ExpenseFilter): ComputedRef<QueryResponse<TimeS
     }
 
     return series
-  })
+  }
 
   return computed(() => {
     return {

@@ -9,9 +9,7 @@ export function useQuery<Data, Filter = void>(
     isLoading: true,
     error: undefined,
     internalError: undefined,
-    fetch: async () => {
-      return
-    },
+    fetch: fetch,
   })
 
   // Initialize optional parameters
@@ -19,7 +17,7 @@ export function useQuery<Data, Filter = void>(
   if (options.watchFilter === undefined && options.filter !== undefined) options.watchFilter = true
 
   // Retrieve the data
-  const getData = async () => {
+  async function getData() {
     queryResponse.value.isLoading = true
     queryResponse.value.error = undefined
     queryResponse.value.internalError = undefined
@@ -43,9 +41,8 @@ export function useQuery<Data, Filter = void>(
     }
   }
 
-  const fetch = async () => {
+  async function fetch() {
     await getData()
-    console.log('useQuery after await getData')
   }
 
   if (options.runQuery) {
@@ -71,8 +68,8 @@ export function useQuery<Data, Filter = void>(
       error: queryResponse.value.error,
       internalError: queryResponse.value.internalError,
       fetch: fetch,
-    }
+    } as QueryResponse<Data>
   })
-  console.log('useQuery returning result:', result)
+
   return result
 }

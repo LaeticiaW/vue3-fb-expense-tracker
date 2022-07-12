@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- App Bar -->
-    <q-header elevated class="secondary q-pa-sm">
+    <q-header class="secondary q-pa-sm">
       <q-toolbar>
         <q-btn v-if="isLoggedIn" flat round dense icon="mdi-menu" @click="navItemClicked" />
         <q-toolbar-title>Expense Tracker</q-toolbar-title>
@@ -132,5 +132,11 @@
   }
   :deep(.v-app-bar-nav-icon) {
     margin-left: -8px;
+  }
+
+  @media (max-width: $breakpoint-xs-max) {
+    .q-header {
+      padding: 0px !important;
+    }
   }
 </style>

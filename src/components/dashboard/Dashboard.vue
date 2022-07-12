@@ -145,7 +145,7 @@
 
   @media (max-width: $breakpoint-xs-max) {
     .dashboard {
-      padding-top: 8px !important;
+      padding-top: 0px !important;
     }
   }
 

@@ -7,10 +7,9 @@ import { SelectCategory } from '@/types/category'
  * Retrieves the categories formatted for a select dropdown
  */
 export default function (): ComputedRef<QueryResponse<SelectCategory[]>> {
-  console.log('In useCategorySelect')
   const categories = useCategories({ runQuery: true })
 
-  const selectCategories = computed(() => {
+  const selectCategories = computed((): SelectCategory[] => {
     return categories.value.data?.map((item) => ({
       value: item.id,
       label: item.name,

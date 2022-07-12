@@ -1,67 +1,41 @@
 <template>
-  <q-card class="full-width q-py-md q-mb-md">
-    <q-list dense>
-      <q-item v-for="col in tableColumns" :key="col.name">
-        <q-item-section>
-          <div v-if="col.label === 'Date'" class="row justify-between">
-            <div>
-              <q-item-label class="grid-label text-weight-medium">{{ col.label }}</q-item-label>
-              <q-item-label class="grid-value q-mb-sm">{{ col.value }}</q-item-label>
-            </div>
-            <div>
-              <q-btn
-                round
-                flat
-                icon="mdi-pencil"
-                color="primary"
-                size="sm"
-                class="a-ma-xs"
-                @click="updateExpense()"
-              />
-              <q-btn
-                round
-                flat
-                icon="mdi-delete"
-                color="primary"
-                size="sm"
-                class="q-ma-xs"
-                @click="deleteExpense()"
-              />
-            </div>
-          </div>
-          <div v-else>
-            <q-item-label class="grid-label">{{ col.label }}</q-item-label>
-            <q-item-label class="grid-value q-mb-sm">{{ col.value }}</q-item-label>
-          </div>
-        </q-item-section>
-      </q-item>
-    </q-list>
+  <q-card class="full-width q-pa-md q-mb-md">
+    <div class="row">
+      <div
+        v-for="(col, idx) in props.itemProps.cols"
+        :key="col.name"
+        class="col-4"
+        :class="{ 'text-right': idx === 2 }"
+      >
+        <div class="grid-label">{{ col.label }}</div>
+        <div class="grid-value q-mb-sm">{{ col.value }}</div>
+      </div>
+
+      <div class="col-12 text-weight-medium">Subcategories:</div>
+      <div class="col-12 q-pl-md">
+        <div
+          v-for="subcat in props.itemProps.row.subcategoryTotals"
+          :key="subcat.subcategoryId"
+          class="row"
+        >
+          <div class="col-4">{{ subcat.subcategoryName || 'Unknown' }}</div>
+          <div class="col-4" />
+          <div class="col-4 text-right">{{ subcat.totalAmount.toFixed(2) }}</div>
+        </div>
+      </div>
+    </div>
   </q-card>
 </template>
 
 <script setup lang="ts">
-  import { computed } from 'vue'
-  import { ExpenseSummary } from '@/types/expense'
+  import { ExpenseTotal } from '@/types/expense'
   import { GridItemProps } from '@/types/table'
-  import { QTableColumn } from 'quasar'
 
   const props = defineProps<{
-    itemProps: GridItemProps<ExpenseSummary>
+    itemProps: GridItemProps<ExpenseTotal>
   }>()
 
-  const emit = defineEmits(['update', 'delete'])
-
-  const tableColumns = computed(() => {
-    return props.itemProps.cols.filter((col: QTableColumn) => col.label !== 'Actions')
-  })
-
-  function updateExpense() {
-    emit('update', props.itemProps.row)
-  }
-
-  function deleteExpense() {
-    emit('delete', props.itemProps.row)
-  }
+  console.log('props:', props)
 </script>
 
 <style lang="scss" scoped>

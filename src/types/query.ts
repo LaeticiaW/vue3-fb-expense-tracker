@@ -3,7 +3,7 @@ export type QueryResponse<Data> = {
   isLoading: boolean
   error?: string
   internalError?: unknown
-  fetch: () => Promise<Data>
+  fetch: () => Promise<void>
 }
 
 export type QueryOptions<Data, Filter = void> = {

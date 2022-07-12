@@ -23,4 +23,18 @@
   .q-loading-bar--top {
     top: 65px !important;
   }
+
+  // Quasar dialog plugin styling
+  .q-dialog-plugin .q-dialog__title {
+    padding: 8px;
+    margin-bottom: 24px;
+    background-color: $primary;
+    color: #ffffff;
+  }
+
+  @media (max-width: $breakpoint-xs-max) {
+    .q-loading-bar--top {
+      top: 49px !important;
+    }
+  }
 </style>

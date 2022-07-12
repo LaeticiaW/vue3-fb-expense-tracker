@@ -3,36 +3,31 @@
     <page-header title="Categories" />
     <page-error :error="categoriesQuery.error" />
 
-    <div>
-      <!--
-        Grid layout with single row and two columns, left column for tree view,
-        right column for details view
-      -->
-      <div class="row" style="height: calc(100vh - 160px)" align="start" align-content="start">
-        <div class="tree-container full-height col-xs-12 col-sm-6 col-md-5">
-          <CategoryTree
-            :categories="categories"
-            @refresh="refreshCategories"
-            @item-selected="onItemSelected"
-            @category-updated="refreshCategories"
-            @category-deleted="refreshCategories"
-          />
-        </div>
-        <div class="details-container full-height col-xs-12 col-sm-6 col-md-7 q-pl-md">
-          <CategoryDetails
-            v-if="selectedItem && !isSubcategory(selectedItem)"
-            :category="selectedItem"
-            @category-updated="onCategoryUpdated"
-            @category-deleted="onCategoryUpdated"
-          />
+    <!-- Grid layout with 1 row and 2 columns, left column for tree, right for details -->
+    <div class="row" style="height: calc(100vh - 160px)" align="start" align-content="start">
+      <div class="tree-container full-height col-xs-12 col-sm-6 col-md-5">
+        <CategoryTree
+          :categories="categories"
+          @refresh="refreshCategories"
+          @item-selected="onItemSelected"
+          @category-updated="refreshCategories"
+          @category-deleted="refreshCategories"
+        />
+      </div>
+      <div class="details-container full-height col-xs-12 col-sm-6 col-md-7 q-pl-md">
+        <CategoryDetails
+          v-if="selectedItem && !isSubcategory(selectedItem)"
+          :category="selectedItem"
+          @category-updated="onCategoryUpdated"
+          @category-deleted="onCategoryUpdated"
+        />
 
-          <subcategory-details
-            v-if="selectedItem && isSubcategory(selectedItem)"
-            :category="parentCategory!"
-            :subcategory="selectedItem"
-            @category-updated="onCategoryUpdated"
-          />
-        </div>
+        <subcategory-details
+          v-if="selectedItem && isSubcategory(selectedItem)"
+          :category="parentCategory!"
+          :subcategory="selectedItem"
+          @category-updated="onCategoryUpdated"
+        />
       </div>
     </div>
   </div>
@@ -102,6 +97,10 @@
     .tree-container {
       max-height: 300px;
       margin-bottom: 8px;
+    }
+    .details-container {
+      padding-left: 0px;
+      padding-bottom: 8px;
     }
   }
 </style>

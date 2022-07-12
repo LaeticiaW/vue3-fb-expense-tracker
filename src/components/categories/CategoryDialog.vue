@@ -2,7 +2,7 @@
   <q-dialog v-model="showDialog">
     <q-card>
       <q-toolbar class="bg-primary text-white">
-        <q-toolbar-title>Update Category</q-toolbar-title>
+        <q-toolbar-title>{{ dialogTitle }}</q-toolbar-title>
       </q-toolbar>
 
       <q-card-section class="dialog-content">
@@ -13,6 +13,7 @@
             v-model="tempCategory.name"
             dense
             outlined
+            autofocus
             maxlength="20"
             label="Category"
             :rules="[ValidationUtil.isRequired]"
@@ -84,6 +85,7 @@
 
   const emit = defineEmits(['update:modelValue', 'category-updated'])
 
+  const dialogTitle = ref<string>(props.category?.id ? 'Update Category' : 'Add Category')
   const form = ref<QForm | null>(null)
 
   const showDialog = computed({

@@ -7,7 +7,6 @@ import useExpenses from '@/hooks/data/useExpenses'
  * Retrieves the expense totals by category
  */
 export default function (filter: ExpenseFilter): ComputedRef<QueryResponse<ExpenseTotal[]>> {
-  console.log('In useExpenseTotals')
   const expensesQuery = useExpenses(filter)
 
   const expenseTotals = computed(() => {
@@ -48,8 +47,8 @@ export default function (filter: ExpenseFilter): ComputedRef<QueryResponse<Expen
             },
           ],
         }
-        prevCatId = categoryId
-        prevSubcatId = subcategoryId
+        prevCatId = categoryId!
+        prevSubcatId = subcategoryId!
       } else {
         categoryTotal.totalAmount += amount
 
@@ -59,7 +58,7 @@ export default function (filter: ExpenseFilter): ComputedRef<QueryResponse<Expen
             subcategoryName,
             totalAmount: amount,
           })
-          prevSubcatId = subcategoryId
+          prevSubcatId = subcategoryId!
         } else {
           categoryTotal.subcategoryTotals[categoryTotal.subcategoryTotals.length - 1].totalAmount +=
             amount

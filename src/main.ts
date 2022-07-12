@@ -67,7 +67,6 @@ app.config.errorHandler = (err, instance, info) => {
 // Note that this is not secure with real authorization, it just fakes a user login
 // and stores the userId in localStorage.  The currentUser is stored in Pinia.
 router.beforeEach(async (to, from, next) => {
-  // console.log('Router beforeEach, to:', to, 'from:', from)
   if (to.name === 'Login') {
     next()
   } else if (!userStore.loggedInUserId) {

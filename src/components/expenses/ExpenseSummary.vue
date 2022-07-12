@@ -214,5 +214,8 @@
     .category-dropdown {
       margin-top: 4px;
     }
+    :deep(.table-container) {
+      max-height: calc(100vh - 230px);
+    }
   }
 </style>

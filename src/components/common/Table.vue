@@ -83,8 +83,8 @@
     font-size: 13px;
     font-weight: bold;
     color: #555555;
-    border: solid 1px #ededed !important;
-    border-top: none !important;
+    border: solid 1px #ededed;
+    border-top: none;
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
     padding: 12px 16px;
@@ -92,15 +92,13 @@
 
   @media (max-width: $breakpoint-xs-max) {
     .table-container {
-      // height: calc(100vh - 240px);
       height: auto;
-      border-style: none !important;
-      //border-top: none !important;
-      //border-bottom: none !important;
+      border-top-style: none !important;
+      border-left-style: none !important;
+      border-right-style: none !important;
     }
     .q-card {
       padding-top: 0px;
-      //border-left: solid 1px #ededed;
     }
   }
 </style>
