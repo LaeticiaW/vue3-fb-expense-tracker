@@ -139,8 +139,8 @@
   }
 
   const dialogTitle = computed(() => {
-    if (props.expense.id === undefined) {
-      return 'Create Expense'
+    if (!props.expense.id) {
+      return 'Add Expense'
     }
     return 'Update Expense'
   })

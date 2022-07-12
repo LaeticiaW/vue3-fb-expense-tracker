@@ -83,7 +83,7 @@
     category?: Category
   }>()
 
-  const emit = defineEmits(['update:modelValue', 'category-updated'])
+  const emit = defineEmits(['update:modelValue', 'category-updated', 'category-added'])
 
   const dialogTitle = ref<string>(props.category?.id ? 'Update Category' : 'Add Category')
   const form = ref<QForm | null>(null)
@@ -112,7 +112,11 @@
     isCategoryUnique.value = true
     try {
       await CategoryService.saveCategory(tempCategory.value)
-      emit('category-updated', tempCategory.value)
+      if (props.category?.id) {
+        emit('category-updated', tempCategory.value)
+      } else {
+        emit('category-added', tempCategory.value)
+      }
       // Close the dialog
       close()
     } catch (error: unknown) {

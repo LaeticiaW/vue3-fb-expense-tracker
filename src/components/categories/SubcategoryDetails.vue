@@ -45,7 +45,7 @@
       v-model="showSubcategoryDialog"
       :category="category"
       :subcategory="subcategory"
-      @subcategory-updated="subcategoryUpdated"
+      @subcategory-updated="onSubcategoryUpdated"
     />
   </div>
 </template>
@@ -54,19 +54,23 @@
   import { ref } from 'vue'
   import SubcategoryDialog from '@/components/categories/SubcategoryDialog.vue'
   import { Category, Subcategory } from '@/types/category'
+  import { useNotify } from '@/hooks/useNotify'
 
   defineProps<{
     category: Category
     subcategory: Subcategory
   }>()
 
-  const emit = defineEmits(['category-updated'])
+  const emit = defineEmits(['tree-updated'])
 
   const showSubcategoryDialog = ref(false)
 
+  const { showNotify } = useNotify()
+
   // Re-emit the subcategory-updated event
-  function subcategoryUpdated(category: Category, subcategory: Subcategory) {
-    emit('category-updated', category, subcategory)
+  function onSubcategoryUpdated(category: Category, subcategory: Subcategory) {
+    emit('tree-updated', category, subcategory)
+    showNotify({ message: 'Subcategory updated successfully', color: 'primary' })
   }
 </script>
 

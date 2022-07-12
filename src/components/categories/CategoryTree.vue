@@ -55,8 +55,9 @@
               class="row items-center justify-between"
               :class="{ selected: isSelected(prop.node) }"
               style="width: 100%"
+              @click="onSelected(prop.node)"
             >
-              <div @click="onSelected(prop.node)">{{ prop.node.name }}</div>
+              <div>{{ prop.node.name }}</div>
               <div v-if="isSelected(prop.node)">
                 <q-btn
                   v-if="!isSubcategory(prop.node)"
@@ -91,6 +92,7 @@
       v-if="showAddCategoryDialog"
       v-model="showAddCategoryDialog"
       @category-updated="onCategoryUpdated"
+      @category-added="onCategoryAdded"
     />
 
     <!-- Add Subcategory dialog -->
@@ -99,6 +101,8 @@
       v-model="showAddSubcategoryDialog"
       :category="currentCategory"
       @category-updated="onCategoryUpdated"
+      @subcategory-updated="onSubcategoryUpdated"
+      @subcategory-added="onSubcategoryAdded"
     />
   </div>
 </template>
@@ -119,13 +123,7 @@
     categories: Category[]
   }>()
 
-  const emit = defineEmits([
-    'item-selected',
-    'category-added',
-    'subcategory-added',
-    'category-updated',
-    'category-deleted',
-  ])
+  const emit = defineEmits(['item-selected', 'tree-updated'])
 
   const qTreeRef = ref<QTree>()
   const selectedKey = ref<string>()
@@ -193,8 +191,30 @@
     qTreeRef.value?.collapseAll()
   }
 
+  function onCategoryAdded(category: Category) {
+    if (!expandedKeys.value.includes(category.id)) {
+      expandedKeys.value.push(category.id)
+    }
+    emit('tree-updated', category)
+    showNotify({ message: 'Category added successfully', color: 'primary' })
+  }
+
   function onCategoryUpdated(category: Category, subcategory?: Subcategory) {
-    emit('category-updated', category, subcategory)
+    emit('tree-updated', category, subcategory)
+    showNotify({ message: 'Category updated successfully', color: 'primary' })
+  }
+
+  function onSubcategoryAdded(category: Category, subcategory?: Subcategory) {
+    if (!expandedKeys.value.includes(category.id)) {
+      expandedKeys.value.push(category.id)
+    }
+    emit('tree-updated', category, subcategory)
+    showNotify({ message: 'Subcategory added successfully', color: 'primary' })
+  }
+
+  function onSubcategoryUpdated(category: Category, subcategory: Subcategory) {
+    emit('tree-updated', category, subcategory)
+    showNotify({ message: 'Subcategory updated successfully', color: 'primary' })
   }
 
   // Delete the selected Category
@@ -208,7 +228,7 @@
         const isCategoryInUse = await ExpenseService.isCategoryInUse(catId)
         if (!isCategoryInUse) {
           await CategoryService.deleteCategory(catId)
-          emit('category-deleted', currentCategory.value)
+          emit('tree-updated', currentCategory.value)
           showNotify({ message: 'Category deleted successfully', color: 'primary' })
         } else {
           showNotify({
@@ -217,7 +237,6 @@
           })
         }
       } catch (error) {
-        console.error('Error deleting category:', error)
         showNotify({ message: 'Error deleting the category' })
       }
     })
@@ -245,7 +264,7 @@
           // Save the category
           await CategoryService.updateCategory(currentCategory.value!)
 
-          emit('category-updated', currentCategory.value)
+          emit('tree-updated', currentCategory.value)
           showNotify({ message: 'Subcategory deleted successfully', color: 'primary' })
         } else {
           showNotify({
@@ -254,7 +273,6 @@
           })
         }
       } catch (error) {
-        console.error('Error deleting subcategory:', error)
         showNotify({ message: 'Error deleting the subcategory' })
       }
     })

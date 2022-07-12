@@ -44,7 +44,7 @@
       v-if="showCategoryDialog"
       v-model="showCategoryDialog"
       :category="category"
-      @category-updated="$emit('category-updated', $event)"
+      @category-updated="onCategoryUpdated"
     />
   </div>
 </template>
@@ -53,14 +53,22 @@
   import { ref } from 'vue'
   import CategoryDialog from '@/components/categories/CategoryDialog.vue'
   import { Category } from '@/types/category'
+  import { useNotify } from '@/hooks/useNotify'
 
   defineProps<{
     category: Category
   }>()
 
-  defineEmits(['category-updated'])
+  const emit = defineEmits(['tree-updated'])
 
   const showCategoryDialog = ref(false)
+
+  const { showNotify } = useNotify()
+
+  function onCategoryUpdated(category: Category) {
+    emit('tree-updated', category)
+    showNotify({ message: 'Category updated successfully', color: 'primary' })
+  }
 </script>
 
 <style lang="scss" scoped>

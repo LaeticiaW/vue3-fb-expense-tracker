@@ -10,23 +10,21 @@
           :categories="categories"
           @refresh="refreshCategories"
           @item-selected="onItemSelected"
-          @category-updated="refreshCategories"
-          @category-deleted="refreshCategories"
+          @tree-updated="onTreeUpdated"
         />
       </div>
       <div class="details-container full-height col-xs-12 col-sm-6 col-md-7 q-pl-md">
         <CategoryDetails
           v-if="selectedItem && !isSubcategory(selectedItem)"
           :category="selectedItem"
-          @category-updated="onCategoryUpdated"
-          @category-deleted="onCategoryUpdated"
+          @tree-updated="onTreeUpdated"
         />
 
         <subcategory-details
           v-if="selectedItem && isSubcategory(selectedItem)"
           :category="parentCategory!"
           :subcategory="selectedItem"
-          @category-updated="onCategoryUpdated"
+          @tree-updated="onTreeUpdated"
         />
       </div>
     </div>
@@ -44,9 +42,12 @@
   import useCategories from '@/hooks/data/useCategories'
   import CategoryTree from '@/components/categories/CategoryTree.vue'
   import { isSubcategory } from '@/util/category'
+  import { useNotify } from '@/hooks/useNotify'
 
   const selectedItem = ref<Category | Subcategory>()
   const parentCategory = ref<Category>()
+
+  const { showNotify } = useNotify()
 
   const { queryLoading } = useLoading()
 
@@ -86,9 +87,9 @@
     }
   }
 
-  // Handle category updated
-  function onCategoryUpdated(category: Category) {
-    refreshCategories(category)
+  // Handle tree updated
+  function onTreeUpdated(category: Category, subcategory?: Subcategory) {
+    refreshCategories(category, subcategory)
   }
 </script>
 

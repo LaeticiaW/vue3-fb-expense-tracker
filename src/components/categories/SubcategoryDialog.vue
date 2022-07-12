@@ -3,7 +3,7 @@
     <q-dialog v-model="showDialog">
       <q-card>
         <q-toolbar class="bg-primary text-white">
-          <q-toolbar-title>Update Subcategory</q-toolbar-title>
+          <q-toolbar-title>{{ dialogTitle }}</q-toolbar-title>
         </q-toolbar>
 
         <q-card-section class="dialog-content">
@@ -87,9 +87,16 @@
     subcategory?: Subcategory
   }>()
 
-  const emit = defineEmits(['update:modelValue', 'category-updated'])
+  const emit = defineEmits(['update:modelValue', 'subcategory-updated', 'subcategory-added'])
 
   const form = ref<QForm | null>(null)
+
+  const dialogTitle = computed(() => {
+    if (!props.subcategory?.id) {
+      return 'Add Subcategory'
+    }
+    return 'Update Subcategory'
+  })
 
   const showDialog = computed({
     get() {
@@ -137,7 +144,11 @@
           try {
             await CategoryService.saveCategory(tempCategory.value)
             // Emit the subcategory-updated event
-            emit('category-updated', tempCategory.value, tempSubcategory.value)
+            if (!props.subcategory?.id) {
+              emit('subcategory-added', tempCategory.value, tempSubcategory.value)
+            } else {
+              emit('subcategory-updated', tempCategory.value, tempSubcategory.value)
+            }
             // Close the dialog
             close()
           } catch (error) {
