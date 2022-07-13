@@ -67,6 +67,9 @@
   import { useNotify } from '@/hooks/useNotify'
   import ReloadService from '@/services/reload'
 
+  // Allow parent to close the nav drawer
+  defineExpose({ closeNavDrawer })
+
   const navDrawerOpen = ref<boolean>(false)
 
   const userStore = useUserStore()
@@ -99,6 +102,12 @@
     navDrawerOpen.value = !navDrawerOpen.value
   }
 
+  // Close the navigation drawer
+  function closeNavDrawer() {
+    console.log('In AppBar closeNavDrawer, setting to false')
+    navDrawerOpen.value = false
+  }
+
   // Logout user
   function logout() {
     userStore.logout()
@@ -123,17 +132,6 @@
 </script>
 
 <style lang="scss" scoped>
-  .v-navigation-drawer--temporary.v-navigation-drawer--clipped {
-    z-index: 5;
-    padding-top: 64px;
-  }
-  .v-list-item__title {
-    font-size: 0.875em !important;
-  }
-  :deep(.v-app-bar-nav-icon) {
-    margin-left: -8px;
-  }
-
   @media (max-width: $breakpoint-xs-max) {
     .q-header {
       padding: 0px !important;

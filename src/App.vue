@@ -1,9 +1,9 @@
 <template>
   <div>
     <q-layout view="hHh Lpr lff" container class="window-height shadow-2">
-      <AppBar />
+      <AppBar ref="appBarRef" />
 
-      <q-page-container>
+      <q-page-container @click="closeNavDrawer">
         <q-page
           class="q-py-xs-sm q-py-sm-lg q-px-xs-sm q-px-sm-md q-px-md-lg q-px-lg-xl q-px-xl-xl"
         >
@@ -15,7 +15,14 @@
 </template>
 
 <script setup lang="ts">
+  import { ref } from 'vue'
   import AppBar from './components/common/AppBar.vue'
+
+  const appBarRef = ref<InstanceType<typeof AppBar> | null>(null)
+
+  function closeNavDrawer() {
+    appBarRef.value?.closeNavDrawer()
+  }
 </script>
 
 <style lang="scss">

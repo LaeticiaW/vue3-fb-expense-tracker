@@ -11,20 +11,6 @@ export default {
   },
 
   /*
-   * Determines if the user's browser is Edge
-   */
-  isEdge() {
-    const UA = window.navigator.userAgent.toLowerCase()
-    return UA && /edge/.test(UA)
-  },
-
-  showSnack(snackOptions, msg, color = 'error') {
-    snackOptions.msg = msg
-    snackOptions.color = color
-    snackOptions.show = true
-  },
-
-  /*
    * Formats a time series shared tooltip
    * @param {object} ctx - the graph context object
    */
@@ -83,7 +69,9 @@ export default {
 
         tooltipMarkup +=
           `${
-            '<div class="tooltip-row symbolhtml" style="display: flex; justify-content: space-between;">' +
+            '<div class="tooltip-row symbolhtml" style="' +
+            'display: flex; justify-content: space-between;' +
+            ' ">' +
             '  <div class="tooltip-label" style="padding-right: 30px;">' +
             '    <svg width="16" height="16" color="'
           }${point.series.color}">${symbolHtml}</svg> ${point.series.name}: ` +
@@ -93,7 +81,9 @@ export default {
       } else {
         tooltipMarkup +=
           `${
-            '<div class="tooltip-row symbol" style="display: flex; justify-content: space-between;">' +
+            '<div class="tooltip-row symbol" style="' +
+            'display: flex; justify-content: space-between;' +
+            '">' +
             '  <div class="tooltip-label" style="padding-right: 30px;">' +
             '    <div class="tooltip-symbol" style="color: '
           }${point.series.color}">${getSymbol(point.series.symbol)}</div> ${point.series.name}: ` +
@@ -102,9 +92,12 @@ export default {
           '</div>'
       }
     })
+
     tooltipMarkup +=
       `${
-        '<div class="tooltip-row" style="display: flex; justify-content: space-between; margin-top: 8px">' +
+        '<div class="tooltip-row" style="' +
+        'display: flex; justify-content: space-between; margin-top: 8px;' +
+        '">' +
         '  <div class="tooltip-label">Total:</div>' +
         '  <div class="tooltip-value">'
       }${numeral(totalValue).format('$0,0.00')}</div>` + '</div>'

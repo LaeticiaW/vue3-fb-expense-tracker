@@ -43,9 +43,9 @@
 
   const emit = defineEmits(['update:modelValue'])
 
-  const selectedValues = ref([])
+  const selectedValues = ref<string[]>([])
 
-  const onChange = (value) => {
+  const onChange = (value: SelectCategory[]) => {
     emit(
       'update:modelValue',
       value.map((item) => item.value)

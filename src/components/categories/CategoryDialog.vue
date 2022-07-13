@@ -34,7 +34,7 @@
                     icon="mdi-delete"
                     color="primary"
                     title="Delete Subcategory"
-                    @click.stop="deleteSubcategory(idx)"
+                    @click="deleteSubcategory(idx)"
                   />
                 </q-item-section>
               </q-item>
@@ -51,7 +51,7 @@
                   icon="mdi-plus"
                   color="primary"
                   title="Add Subcategory"
-                  @click.stop="addSubcategory"
+                  @click="addSubcategory"
                 />
               </template>
             </q-input>

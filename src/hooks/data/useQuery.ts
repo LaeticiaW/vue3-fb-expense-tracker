@@ -26,7 +26,6 @@ export function useQuery<Data, Filter = void>(
       let data: Data
       if (options.filter) {
         data = await options.promise(options.filter)
-        console.info('Query done')
       } else {
         data = await (options.promise as () => Promise<Data>)()
       }

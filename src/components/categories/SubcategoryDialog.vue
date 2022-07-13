@@ -14,6 +14,7 @@
               v-model="tempSubcategory.name"
               dense
               outlined
+              autofocus
               maxlength="20"
               :rules="[ValidationUtil.isRequired]"
               label="Subcategory"
@@ -35,7 +36,7 @@
                       icon="mdi-delete"
                       color="primary"
                       title="Delete Match Text"
-                      @click.stop="deleteMatchText(matchText, idx)"
+                      @click="deleteMatchText(matchText, idx)"
                     />
                   </q-item-section>
                 </q-item>
@@ -53,7 +54,7 @@
                     color="primary"
                     title="Add Match Text"
                     class="icon-btn"
-                    @click.stop="addMatchText"
+                    @click="addMatchText"
                   />
                 </template>
               </q-input>

@@ -68,7 +68,7 @@
                   title="Add subcategory"
                   size="12px"
                   class="tree-btn"
-                  @click.stop="showAddSubcategoryDialog = true"
+                  @click="showAddSubcategoryDialog = true"
                 />
                 <q-btn
                   flat
@@ -78,7 +78,7 @@
                   title="Delete Category"
                   size="12px"
                   class="tree-btn q-ml-sm"
-                  @click.stop="deleteItem(prop.node)"
+                  @click="deleteItem(prop.node)"
                 />
               </div>
             </div>
@@ -167,6 +167,7 @@
       currentCategory.value = item
     } else {
       currentSubcategory.value = item
+      currentCategory.value = props.categories.find((cat) => cat.id === item.parentId)
     }
 
     emit('item-selected', item)
@@ -221,13 +222,21 @@
   async function deleteCategory() {
     showDialog({
       title: 'Confirm Delete Category',
-      message: `Are you sure you want to delete category ${currentCategory.value?.name}?`,
+      message: `Are you sure you want to delete category '${currentCategory.value?.name}'?`,
     }).onOk(async () => {
       try {
         const catId = currentCategory.value!.id
         const isCategoryInUse = await ExpenseService.isCategoryInUse(catId)
         if (!isCategoryInUse) {
           await CategoryService.deleteCategory(catId)
+
+          // Just deleted the selected category, so now select first category in list
+          if (props.categories.length) {
+            selectedKey.value = props.categories[0].id
+            currentCategory.value = props.categories[0]
+            console.log('after delete, selected category:', currentCategory.value)
+          }
+
           emit('tree-updated', currentCategory.value)
           showNotify({ message: 'Category deleted successfully', color: 'primary' })
         } else {
@@ -246,7 +255,7 @@
   async function deleteSubcategory() {
     showDialog({
       title: 'Confirm Delete Subcategory',
-      message: `Are you sure you want to delete subcategory ${currentSubcategory.value?.name}?`,
+      message: `Are you sure you want to delete subcategory '${currentSubcategory.value?.name}'?`,
     }).onOk(async () => {
       try {
         const subcatId = currentSubcategory.value!.id
@@ -263,6 +272,10 @@
 
           // Save the category
           await CategoryService.updateCategory(currentCategory.value!)
+
+          // Just deleted the selected subcategory, so now select the parent category
+          selectedKey.value = currentCategory.value?.id
+          console.log('deleteSubcategory, selecting category:', currentCategory.value)
 
           emit('tree-updated', currentCategory.value)
           showNotify({ message: 'Subcategory deleted successfully', color: 'primary' })

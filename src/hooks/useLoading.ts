@@ -24,6 +24,7 @@ export function useLoading() {
         }
         if (newValue.filter((isLoading) => !isLoading).length === watchQueries.length) {
           stopLoading()
+          loading = false
         }
       },
       { immediate: true }

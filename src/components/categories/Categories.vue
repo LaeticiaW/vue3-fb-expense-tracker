@@ -42,12 +42,9 @@
   import useCategories from '@/hooks/data/useCategories'
   import CategoryTree from '@/components/categories/CategoryTree.vue'
   import { isSubcategory } from '@/util/category'
-  import { useNotify } from '@/hooks/useNotify'
 
   const selectedItem = ref<Category | Subcategory>()
   const parentCategory = ref<Category>()
-
-  const { showNotify } = useNotify()
 
   const { queryLoading } = useLoading()
 
@@ -61,13 +58,8 @@
   })
 
   // Refresh the categories data
-  async function refreshCategories(cat: Category, subcat?: Subcategory) {
+  async function refreshCategories() {
     categoriesQuery.value.fetch()
-    if (subcat) {
-      onItemSelected(subcat)
-    } else {
-      onItemSelected(cat)
-    }
   }
 
   // Return the parent category for the specified subcategory
@@ -89,7 +81,12 @@
 
   // Handle tree updated
   function onTreeUpdated(category: Category, subcategory?: Subcategory) {
-    refreshCategories(category, subcategory)
+    refreshCategories()
+    if (subcategory) {
+      onItemSelected(subcategory)
+    } else {
+      onItemSelected(category)
+    }
   }
 </script>
 

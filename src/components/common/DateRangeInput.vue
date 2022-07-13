@@ -64,7 +64,6 @@
   import dayjs from 'dayjs'
   import { QMenu } from 'quasar'
 
-  // Props
   const props = withDefaults(
     defineProps<{
       startDate: Ref<string>
@@ -80,7 +79,6 @@
     }
   )
 
-  // Emits
   defineEmits(['update', 'update:startDate', 'update:endDate'])
 
   // Initialize start and end dates

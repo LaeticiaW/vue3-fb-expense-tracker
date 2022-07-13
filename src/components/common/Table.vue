@@ -2,7 +2,7 @@
   <div>
     <div class="table-container">
       <q-table
-        v-model:pagination="pagination"
+        v-model:pagination="tablePagination"
         :grid="$q.screen.xs"
         :rows="tableRows"
         :columns="tableColumns"
@@ -30,7 +30,8 @@
 </template>
 
 <script setup lang="ts">
-  import { useQuasar, QTableColumn } from 'quasar'
+  import { computed } from 'vue'
+  import { useQuasar } from 'quasar'
 
   type TablePagination = {
     sortBy?: string | undefined
@@ -40,18 +41,19 @@
     rowsNumber?: number | undefined
   }
 
-  withDefaults(
+  const props = withDefaults(
     defineProps<{
       tableRows: Record<string, unknown>[]
-      tableColumns: QTableColumn<any>[]
+      // tableColumns: QTableColumn<any>[]
+      tableColumns: any[]
       rowKey: string
-      pagination?: TablePagination | undefined
+      modelPagination?: TablePagination | undefined
       rowText: string
       footerLabel?: string
       footerValue?: string | number
     }>(),
     {
-      pagination: () => ({
+      modelPagination: () => ({
         rowsPerPage: 0,
       }),
       footerLabel: undefined,
@@ -59,9 +61,19 @@
     }
   )
 
-  const emit = defineEmits(['row-click'])
+  const emit = defineEmits(['row-click', 'update:modelPagination'])
 
   const $q = useQuasar()
+
+  // Computed value to prevent modifying modelPagination prop
+  const tablePagination = computed({
+    get() {
+      return props.modelPagination
+    },
+    set(newValue) {
+      emit('update:modelPagination', newValue)
+    },
+  })
 
   function rowClicked(evt: Event, rowObject: unknown) {
     emit('row-click', evt, rowObject)
