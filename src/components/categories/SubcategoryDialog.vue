@@ -1,12 +1,12 @@
 <template>
   <div>
     <q-dialog v-model="showDialog">
-      <q-card>
+      <q-card class="subcategory-card">
         <q-toolbar class="bg-primary text-white">
           <q-toolbar-title>{{ dialogTitle }}</q-toolbar-title>
         </q-toolbar>
 
-        <q-card-section class="dialog-content">
+        <q-card-section>
           <q-form ref="form" class="form">
             <div class="text-negative">{{ dialogMessage }}</div>
 
@@ -234,8 +234,12 @@
   .text-mappings {
     border: solid 1px #9a9a9a;
   }
-
-  .form {
-    width: 400px;
+  .subcategory-card {
+    width: 450px;
+  }
+  @media (max-width: $breakpoint-xs-max) {
+    .subcategory-card {
+      width: 70vh;
+    }
   }
 </style>

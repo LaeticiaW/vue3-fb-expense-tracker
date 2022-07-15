@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="table-container">
+      <!-- v-model:pagination="tablePagination" -->
       <q-table
-        v-model:pagination="tablePagination"
         :grid="$q.screen.xs"
         :rows="tableRows"
         :columns="tableColumns"
@@ -12,6 +12,7 @@
         hide-bottom
         flat
         dense
+        binary-state-sort
         @row-click="rowClicked"
       >
         <!-- Pass the table slots to the q-table component -->
@@ -47,15 +48,15 @@
       // tableColumns: QTableColumn<any>[]
       tableColumns: any[]
       rowKey: string
-      modelPagination?: TablePagination | undefined
+      //modelPagination?: TablePagination | undefined
       rowText: string
       footerLabel?: string
       footerValue?: string | number
     }>(),
     {
-      modelPagination: () => ({
-        rowsPerPage: 0,
-      }),
+      // modelPagination: () => ({
+      //   rowsPerPage: 0,
+      // }),
       footerLabel: undefined,
       footerValue: undefined,
     }
@@ -66,14 +67,14 @@
   const $q = useQuasar()
 
   // Computed value to prevent modifying modelPagination prop
-  const tablePagination = computed({
-    get() {
-      return props.modelPagination
-    },
-    set(newValue) {
-      emit('update:modelPagination', newValue)
-    },
-  })
+  // const tablePagination = computed({
+  //   get() {
+  //     return props.modelPagination
+  //   },
+  //   set(newValue) {
+  //     emit('update:modelPagination', newValue)
+  //   },
+  // })
 
   function rowClicked(evt: Event, rowObject: unknown) {
     emit('row-click', evt, rowObject)
@@ -87,7 +88,7 @@
     border: solid 1px #ededed !important;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
-    max-height: calc(100vh - 280px);
+    max-height: calc(100vh - 260px);
     overflow: auto;
   }
 

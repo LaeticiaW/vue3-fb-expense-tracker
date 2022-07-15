@@ -34,8 +34,6 @@
   const props = defineProps<{
     itemProps: GridItemProps<ExpenseTotal>
   }>()
-
-  console.log('props:', props)
 </script>
 
 <style lang="scss" scoped>

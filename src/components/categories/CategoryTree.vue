@@ -13,7 +13,7 @@
               <q-item
                 v-close-popup
                 clickable
-                :disabled="!isCategorySelected"
+                :disable="!isCategorySelected"
                 @click="showAddSubcategoryDialog = true"
               >
                 <q-item-section>Add Subcategory</q-item-section>
@@ -21,7 +21,7 @@
               <q-item
                 v-close-popup
                 clickable
-                :disabled="!isCategorySelected && !isSubcategorySelected"
+                :disable="!isCategorySelected && !isSubcategorySelected"
                 @click="deleteItem"
               >
                 <q-item-section>Delete</q-item-section>
@@ -137,14 +137,18 @@
   const { showNotify } = useNotify()
   const { showDialog } = useDialog()
 
+  // Is a category selected in the tree
   const isCategorySelected = computed(() => {
-    return currentCategory.value ?? false
+    return !!currentCategory.value?.id && !isSubcategorySelected.value
   })
 
+  // Is a subcategory selected in the tree
   const isSubcategorySelected = computed(() => {
-    return currentSubcategory.value
+    return !!currentSubcategory.value?.id
   })
 
+  // When the categories list changes, ensure an item in the tree is selected.
+  // Note that after tree changes, the categories list is refetched by the parent component
   watch(
     () => props.categories,
     (newCategories: Category[]) => {
@@ -157,14 +161,17 @@
     { immediate: true, deep: true }
   )
 
+  // Is specified item selected in tree
   function isSelected(item: Category | Subcategory) {
     return selectedKey.value === item.id
   }
 
+  // Item selected in tree
   function onSelected(item: Category | Subcategory) {
     selectedKey.value = item.id
     if (!isSubcategory(item)) {
       currentCategory.value = item
+      currentSubcategory.value = undefined
     } else {
       currentSubcategory.value = item
       currentCategory.value = props.categories.find((cat) => cat.id === item.parentId)
@@ -174,8 +181,8 @@
   }
 
   // When the Delete menu item is selected, determine wether to delete a category or subcategory
-  function deleteItem(item: Category | Subcategory) {
-    if (isSubcategory(item)) {
+  function deleteItem() {
+    if (isSubcategorySelected.value) {
       deleteSubcategory()
     } else {
       deleteCategory()
@@ -192,6 +199,7 @@
     qTreeRef.value?.collapseAll()
   }
 
+  // Handle category added to tree
   function onCategoryAdded(category: Category) {
     if (!expandedKeys.value.includes(category.id)) {
       expandedKeys.value.push(category.id)
@@ -200,11 +208,13 @@
     showNotify({ message: 'Category added successfully', color: 'primary' })
   }
 
+  // Handle category updated in tree
   function onCategoryUpdated(category: Category, subcategory?: Subcategory) {
     emit('tree-updated', category, subcategory)
     showNotify({ message: 'Category updated successfully', color: 'primary' })
   }
 
+  // Handle subcategory added to tree
   function onSubcategoryAdded(category: Category, subcategory?: Subcategory) {
     if (!expandedKeys.value.includes(category.id)) {
       expandedKeys.value.push(category.id)
@@ -213,6 +223,7 @@
     showNotify({ message: 'Subcategory added successfully', color: 'primary' })
   }
 
+  // Handle subcategory updated in tree
   function onSubcategoryUpdated(category: Category, subcategory: Subcategory) {
     emit('tree-updated', category, subcategory)
     showNotify({ message: 'Subcategory updated successfully', color: 'primary' })
@@ -229,13 +240,7 @@
         const isCategoryInUse = await ExpenseService.isCategoryInUse(catId)
         if (!isCategoryInUse) {
           await CategoryService.deleteCategory(catId)
-
-          // Just deleted the selected category, so now select first category in list
-          if (props.categories.length) {
-            selectedKey.value = props.categories[0].id
-            currentCategory.value = props.categories[0]
-            console.log('after delete, selected category:', currentCategory.value)
-          }
+          selectedKey.value = undefined
 
           emit('tree-updated', currentCategory.value)
           showNotify({ message: 'Category deleted successfully', color: 'primary' })
@@ -275,8 +280,6 @@
 
           // Just deleted the selected subcategory, so now select the parent category
           selectedKey.value = currentCategory.value?.id
-          console.log('deleteSubcategory, selecting category:', currentCategory.value)
-
           emit('tree-updated', currentCategory.value)
           showNotify({ message: 'Subcategory deleted successfully', color: 'primary' })
         } else {

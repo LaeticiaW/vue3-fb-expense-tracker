@@ -1,6 +1,6 @@
 <template>
   <q-dialog v-model="showDialog">
-    <q-card>
+    <q-card class="expense-card">
       <q-toolbar class="bg-primary text-white">
         <q-toolbar-title>{{ dialogTitle }}</q-toolbar-title>
       </q-toolbar>
@@ -47,7 +47,6 @@
               required
               no-error-icon
               label="Description"
-              class="description form-item"
               :rules="[ValidationUtil.isRequired]"
             />
           </div>
@@ -57,6 +56,7 @@
             v-model="tempExpense.categoryId"
             outlined
             dense
+            options-dense
             emit-value
             map-options
             no-error-icon
@@ -64,7 +64,6 @@
             label="Category"
             option-label="name"
             option-value="id"
-            class="form-item"
             :rules="[ValidationUtil.isRequired]"
             @update:modelValue="tempExpense.subcategoryId = undefined"
           />
@@ -74,6 +73,7 @@
             v-model="tempExpense.subcategoryId"
             outlined
             dense
+            options-dense
             emit-value
             map-options
             no-error-icon
@@ -81,7 +81,6 @@
             label="Subcategory"
             option-label="name"
             option-value="id"
-            class="form-item"
             :rules="[ValidationUtil.isRequired]"
           />
 
@@ -93,7 +92,6 @@
             required
             no-error-icon
             label="Amount"
-            class="form-item amount"
             :rules="[ValidationUtil.isRequired, ValidationUtil.isNumber]"
           />
         </q-form>
@@ -223,15 +221,12 @@
   :deep(.q-field--outlined.q-field--readonly .q-field__control:before) {
     border-style: solid !important;
   }
-
-  .form-item:not(:last-child) {
-    margin: 12px 0px;
+  .expense-card {
     width: 450px;
   }
-
   @media (max-width: $breakpoint-xs-max) {
-    .form-item {
-      width: 70vw;
+    .expense-card {
+      width: 70vh;
     }
   }
 </style>

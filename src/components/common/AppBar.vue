@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- App Bar -->
-    <q-header class="secondary q-pa-sm">
+    <q-header elevated class="secondary q-pa-xs">
       <q-toolbar>
         <q-btn v-if="isLoggedIn" flat round dense icon="mdi-menu" @click="navItemClicked" />
         <q-toolbar-title>Expense Tracker</q-toolbar-title>
@@ -104,7 +104,6 @@
 
   // Close the navigation drawer
   function closeNavDrawer() {
-    console.log('In AppBar closeNavDrawer, setting to false')
     navDrawerOpen.value = false
   }
 

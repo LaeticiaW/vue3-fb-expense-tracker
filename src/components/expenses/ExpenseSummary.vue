@@ -215,7 +215,7 @@
       margin-top: 4px;
     }
     :deep(.table-container) {
-      max-height: calc(100vh - 230px);
+      max-height: calc(100vh - 200px) !important;
     }
   }
 </style>

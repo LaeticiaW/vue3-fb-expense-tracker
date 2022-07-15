@@ -23,14 +23,14 @@ export type ImportDetails = {
 }
 
 export type ImportFileInfo = {
-  csvFile: Ref<File>
-  dateFormat: Ref<string>
+  csvFile?: Ref<File | undefined>
+  dateFormat: Ref<string | undefined>
   negativeExpenses: Ref<boolean>
-  description: Ref<string>
+  description: Ref<string | undefined>
 }
 export type ImportFileStructure = {
-  hasHeaderRow: Ref<boolean>
-  dateFormatField: Ref<number>
-  amountField: Ref<number>
-  descriptionField: Ref<number>
+  hasHeaderRow: Ref<boolean | undefined>
+  dateFormatField: Ref<number | undefined>
+  amountField: Ref<number | undefined>
+  descriptionField: Ref<number | undefined>
 }

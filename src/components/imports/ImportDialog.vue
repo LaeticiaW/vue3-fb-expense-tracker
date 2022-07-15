@@ -1,6 +1,6 @@
 <template>
   <q-dialog v-model="showImportDialog">
-    <q-card>
+    <q-card class="import-card">
       <q-toolbar class="bg-primary text-white">
         <q-toolbar-title>Import Expenses</q-toolbar-title>
       </q-toolbar>
@@ -14,97 +14,105 @@
           </div>
 
           <div class="row form-row">
-            <div class="col-xs-12 col-sm-6 q-pr-md">
-              <div class="bg-secondary bold q-pa-sm rounded-borders">File Info</div>
+            <div class="col-xs-12 col-sm-6 first-column">
+              <div class="form-column rounded-borders relative-position full-height">
+                <div class="bg-secondary bold q-pa-sm rounded-borders">File Info</div>
 
-              <q-separator class="q-mb-sm" />
+                <q-separator class="q-mb-sm" />
 
-              <q-file
-                v-model="fileInfo.csvFile.value"
-                dense
-                outlined
-                no-error-icon
-                label="File Name"
-                :rules="[ValidationUtil.isRequired]"
-                class="form-item"
-              />
+                <div class="q-pa-md full-height">
+                  <q-file
+                    v-model="fileInfo.csvFile.value"
+                    dense
+                    outlined
+                    no-error-icon
+                    label="File Name"
+                    :rules="[ValidationUtil.isRequired]"
+                    class="form-item"
+                  />
 
-              <q-input
-                v-model="fileInfo.description.value"
-                dense
-                outlined
-                no-error-icon
-                label="Description"
-                :rules="[ValidationUtil.isRequired]"
-                class="form-item"
-              />
+                  <q-input
+                    v-model="fileInfo.description.value"
+                    dense
+                    outlined
+                    no-error-icon
+                    label="Description"
+                    :rules="[ValidationUtil.isRequired]"
+                    class="form-item"
+                  />
 
-              <q-select
-                v-model="fileInfo.dateFormat.value"
-                outlined
-                dense
-                options-dense
-                emit-value
-                map-options
-                no-error-icon
-                :options="dateFormats"
-                label="Date Format"
-                class="form-item"
-                :rules="[ValidationUtil.isRequired]"
-              />
+                  <q-select
+                    v-model="fileInfo.dateFormat.value"
+                    outlined
+                    dense
+                    options-dense
+                    emit-value
+                    map-options
+                    no-error-icon
+                    :options="dateFormats"
+                    label="Date Format"
+                    class="form-item"
+                    :rules="[ValidationUtil.isRequired]"
+                  />
 
-              <q-checkbox
-                v-model="fileInfo.negativeExpenses"
-                class="form-item"
-                label="Expenses are Negative"
-              />
+                  <q-checkbox
+                    v-model="fileInfo.negativeExpenses.value"
+                    label="Expenses are Negative"
+                    color="primary"
+                  />
+                </div>
+              </div>
             </div>
             <div class="col-xs-12 col-sm-6">
-              <div class="bg-secondary bold q-pa-sm rounded-borders">File Structure</div>
+              <div class="form-column rounded-borders relative-position full-height">
+                <div class="bg-secondary bold q-pa-sm rounded-borders">File Structure</div>
 
-              <q-separator class="q-mb-sm" />
+                <q-separator class="q-mb-sm" />
 
-              <q-select
-                v-model="fileStructure.dateFormatField.value"
-                outlined
-                dense
-                options-dense
-                emit-value
-                map-options
-                no-error-icon
-                :options="fieldPositions"
-                label="Date Field Position"
-                class="form-item"
-                :rules="[ValidationUtil.isRequired, ValidationUtil.isNumber]"
-              />
+                <div class="q-pa-md full-height">
+                  <q-select
+                    v-model="fileStructure.dateFormatField.value"
+                    outlined
+                    dense
+                    options-dense
+                    emit-value
+                    map-options
+                    no-error-icon
+                    :options="fieldPositions"
+                    label="Date Field Position"
+                    class="form-item"
+                    :rules="[ValidationUtil.isRequired, ValidationUtil.isNumber]"
+                  />
 
-              <q-select
-                v-model="fileStructure.amountField.value"
-                outlined
-                dense
-                options-dense
-                emit-value
-                map-options
-                no-error-icon
-                :options="fieldPositions"
-                label="Amount Field Position"
-                class="form-item"
-                :rules="[ValidationUtil.isRequired, ValidationUtil.isNumber]"
-              />
+                  <q-select
+                    v-model="fileStructure.amountField.value"
+                    outlined
+                    dense
+                    options-dense
+                    emit-value
+                    map-options
+                    no-error-icon
+                    :options="fieldPositions"
+                    label="Amount Field Position"
+                    class="form-item"
+                    :rules="[ValidationUtil.isRequired, ValidationUtil.isNumber]"
+                  />
 
-              <q-select
-                v-model="fileStructure.descriptionField.value"
-                outlined
-                dense
-                options-dense
-                emit-value
-                map-options
-                no-error-icon
-                :options="fieldPositions"
-                label="Description Field Position"
-                class="form-item"
-                :rules="[ValidationUtil.isRequired, ValidationUtil.isNumber]"
-              />
+                  <q-select
+                    v-model="fileStructure.descriptionField.value"
+                    outlined
+                    dense
+                    options-dense
+                    emit-value
+                    map-options
+                    no-error-icon
+                    :options="fieldPositions"
+                    label="Description Field Position"
+                    class="form-item"
+                    :rules="[ValidationUtil.isRequired, ValidationUtil.isNumber]"
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </q-form>
@@ -114,7 +122,7 @@
 
       <q-card-actions align="right">
         <q-btn flat color="primary" class="cancel-button" @click="close">Cancel</q-btn>
-        <q-btn flat color="primary" :disabled="!initialized" @click="importExpenses">Import</q-btn>
+        <q-btn flat color="primary" :disable="!initialized" @click="importExpenses">Import</q-btn>
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -142,7 +150,7 @@
   let fileInfo: ImportFileInfo = {
     csvFile: ref(),
     dateFormat: ref(),
-    negativeExpenses: ref(false),
+    negativeExpenses: ref<boolean>(false),
     description: ref(),
   }
   let fileStructure: ImportFileStructure = {
@@ -382,7 +390,7 @@
   }
 
   // Validate the expense object
-  function validate(expense) {
+  function validate(expense: Expense) {
     if (!isValidAmount(expense.amount)) {
       return false
     }
@@ -393,7 +401,7 @@
   }
 
   // Determine if an amount value is valid
-  function isValidAmount(value) {
+  function isValidAmount(value: string | number) {
     if (value === undefined || value === null || value <= 0 || Number.isNaN(value)) {
       console.error('Invalid amount:', value)
       return false
@@ -402,7 +410,7 @@
   }
 
   // Determine if a date value is valid
-  function isValidDate(value, dateFormat) {
+  function isValidDate(value, dateFormat: string) {
     if (!dayjs(value, dateFormat)) {
       console.error('Invalid date:', value, 'format:', dateFormat)
       return false
@@ -417,18 +425,24 @@
 </script>
 
 <style lang="scss" scoped>
-  $dialog-padding: 96px;
-
-  .form-row {
-    width: 500px;
-    .form-item {
-      width: 100%;
+  .form-column {
+    border: solid 1px #e0e0e0;
+  }
+  .import-card {
+    width: 600px;
+  }
+  @media (max-width: $breakpoint-xs-max) {
+    .import-card {
+      width: 70vh;
     }
   }
-
+  .first-column {
+    padding-right: 12px;
+  }
   @media (max-width: $breakpoint-xs-max) {
-    .form-row {
-      width: calc(100vw - #{$dialog-padding}) !important;
+    .first-column {
+      margin-bottom: 12px;
+      padding-right: 0px;
     }
   }
 </style>

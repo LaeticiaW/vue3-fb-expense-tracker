@@ -4,9 +4,7 @@
       <AppBar ref="appBarRef" />
 
       <q-page-container @click="closeNavDrawer">
-        <q-page
-          class="q-py-xs-sm q-py-sm-lg q-px-xs-sm q-px-sm-md q-px-md-lg q-px-lg-xl q-px-xl-xl"
-        >
+        <q-page class="q-py-xs-sm q-py-sm-md q-px-xs-sm q-px-sm-md">
           <router-view :key="$route.fullPath" />
         </q-page>
       </q-page-container>
@@ -28,7 +26,13 @@
 <style lang="scss">
   // Position the loading bar below the app header
   .q-loading-bar--top {
-    top: 65px !important;
+    top: 58px !important;
+  }
+
+  @media (max-width: $breakpoint-xs-max) {
+    .q-loading-bar--top {
+      top: 50px !important;
+    }
   }
 
   // Quasar dialog plugin styling
@@ -37,11 +41,5 @@
     margin-bottom: 24px;
     background-color: $primary;
     color: #ffffff;
-  }
-
-  @media (max-width: $breakpoint-xs-max) {
-    .q-loading-bar--top {
-      top: 49px !important;
-    }
   }
 </style>

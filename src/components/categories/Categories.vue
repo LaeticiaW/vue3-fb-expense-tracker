@@ -4,7 +4,7 @@
     <page-error :error="categoriesQuery.error" />
 
     <!-- Grid layout with 1 row and 2 columns, left column for tree, right for details -->
-    <div class="row" style="height: calc(100vh - 160px)" align="start" align-content="start">
+    <div class="row" style="height: calc(100vh - 130px)" align="start" align-content="start">
       <div class="tree-container full-height col-xs-12 col-sm-6 col-md-5">
         <CategoryTree
           :categories="categories"

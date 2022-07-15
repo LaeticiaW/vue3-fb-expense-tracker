@@ -1,11 +1,11 @@
 <template>
   <q-dialog v-model="showDialog">
-    <q-card>
+    <q-card class="category-card">
       <q-toolbar class="bg-primary text-white">
         <q-toolbar-title>{{ dialogTitle }}</q-toolbar-title>
       </q-toolbar>
 
-      <q-card-section class="dialog-content">
+      <q-card-section>
         <q-form ref="form" class="form">
           <div class="text-negative">{{ dialogMessage }}</div>
 
@@ -63,7 +63,7 @@
 
       <q-card-actions align="right">
         <q-btn flat color="primary" @click="close">Cancel</q-btn>
-        <q-btn flat color="primary" :disabled="!tempCategory.name" @click="save">Save</q-btn>
+        <q-btn flat color="primary" :="!tempCategory.name" @click="save">Save</q-btn>
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -177,7 +177,12 @@
     overflow-y: auto;
   }
 
-  .form {
-    width: 400px;
+  .category-card {
+    width: 450px;
+  }
+  @media (max-width: $breakpoint-xs-max) {
+    .category-card {
+      width: 70vh;
+    }
   }
 </style>
