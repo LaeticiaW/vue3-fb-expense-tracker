@@ -1,14 +1,14 @@
 <template>
   <div>
     <div class="table-container">
-      <!-- v-model:pagination="tablePagination" -->
       <q-table
         :grid="$q.screen.xs"
         :rows="tableRows"
         :columns="tableColumns"
         :row-key="rowKey"
-        virtual-scroll
         :rows-per-page-options="[0]"
+        virtual-scroll
+        grid-header
         hide-bottom
         flat
         dense
@@ -31,32 +31,18 @@
 </template>
 
 <script setup lang="ts">
-  import { computed } from 'vue'
-  import { useQuasar } from 'quasar'
+  import { useQuasar, QTableColumn } from 'quasar'
 
-  type TablePagination = {
-    sortBy?: string | undefined
-    descending?: boolean | undefined
-    page?: number | undefined
-    rowsPerPage?: number | undefined
-    rowsNumber?: number | undefined
-  }
-
-  const props = withDefaults(
+  withDefaults(
     defineProps<{
       tableRows: Record<string, unknown>[]
-      // tableColumns: QTableColumn<any>[]
-      tableColumns: any[]
+      tableColumns: QTableColumn[]
       rowKey: string
-      //modelPagination?: TablePagination | undefined
       rowText: string
       footerLabel?: string
       footerValue?: string | number
     }>(),
     {
-      // modelPagination: () => ({
-      //   rowsPerPage: 0,
-      // }),
       footerLabel: undefined,
       footerValue: undefined,
     }
@@ -65,16 +51,6 @@
   const emit = defineEmits(['row-click', 'update:modelPagination'])
 
   const $q = useQuasar()
-
-  // Computed value to prevent modifying modelPagination prop
-  // const tablePagination = computed({
-  //   get() {
-  //     return props.modelPagination
-  //   },
-  //   set(newValue) {
-  //     emit('update:modelPagination', newValue)
-  //   },
-  // })
 
   function rowClicked(evt: Event, rowObject: unknown) {
     emit('row-click', evt, rowObject)
@@ -109,9 +85,14 @@
       border-top-style: none !important;
       border-left-style: none !important;
       border-right-style: none !important;
+      max-height: calc(100vh - 215px);
     }
     .q-card {
       padding-top: 0px;
+    }
+
+    :deep(th:not(.sortable)) {
+      display: none;
     }
   }
 </style>

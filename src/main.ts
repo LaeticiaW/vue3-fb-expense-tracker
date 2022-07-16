@@ -30,7 +30,7 @@ app.use(pinia)
 const userStore = useUserStore()
 
 // Initialize Highcharts
-app.use(HighchartsVue as any)
+app.use(HighchartsVue as unknown as Plugin)
 annotations(Highcharts)
 drilldown(Highcharts)
 

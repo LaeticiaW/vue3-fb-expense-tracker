@@ -7,8 +7,8 @@ export type GridItemProps<Data> = {
   rowIndex: number
   pageIndex: number
   cols: (QTableColumn & { value: string | number | boolean })[]
-  colsMap: Record<string, any>
-  sort: (col: string | Record<string, any>) => void
+  colsMap: Record<string, string | number | boolean>
+  sort: (col: string | Record<string, string | number | boolean>) => void
   selected: boolean
   expand: boolean
   color: string

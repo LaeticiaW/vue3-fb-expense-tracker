@@ -8,9 +8,12 @@
       <q-separator />
 
       <q-card-section>
-        <q-form ref="form" v-model="isFormValid" greedy>
+        <q-form ref="form" greedy>
           <div v-if="dialogMessage" class="text-negative q-pb-md">
             {{ dialogMessage }}
+          </div>
+          <div v-if="categoriesQuery.error" class="text-negative q-pb-md">
+            {{ categoriesErrorMsg }}
           </div>
 
           <div class="row form-row">
@@ -122,22 +125,25 @@
 
       <q-card-actions align="right">
         <q-btn flat color="primary" class="cancel-button" @click="close">Cancel</q-btn>
-        <q-btn flat color="primary" :disable="!initialized" @click="importExpenses">Import</q-btn>
+        <q-btn flat color="primary" :disable="categoriesQuery.isLoading" @click="importExpenses">
+          Import
+        </q-btn>
       </q-card-actions>
     </q-card>
   </q-dialog>
 </template>
 
 <script setup lang="ts">
-  import { ref, computed, ComputedRef } from 'vue'
+  import { ref, computed } from 'vue'
   import dayjs from 'dayjs'
-  import { Import, ImportDetails, ImportFileInfo, ImportFileStructure } from '@/types/import'
-  import { QueryResponse } from '@/types/query'
+  import { ImportDetails, ImportFileInfo, ImportFileStructure } from '@/types/import'
   import { Expense } from '@/types/expense'
-  import { Category, Subcategory } from '@/types/category'
+  import { Subcategory } from '@/types/category'
+  import ExpenseService from '@/services/expense'
   import useCategories from '@/hooks/data/useCategories'
   import ValidationUtil from '@/util/validation'
   import { useDialog } from '@/hooks/useDialog'
+  import { QForm } from 'quasar'
 
   const props = defineProps<{
     modelValue: boolean
@@ -145,8 +151,9 @@
 
   const emit = defineEmits(['update:modelValue', 'file-imported'])
 
-  const initialized = ref(false)
-  const isFormValid = ref(true)
+  const form = ref<QForm | null>(null)
+  const categoriesErrorMsg = `Error retrieving categories, import can continue but
+    categories/subcategory will not be added to imported expenses`
   let fileInfo: ImportFileInfo = {
     csvFile: ref(),
     dateFormat: ref(),
@@ -162,21 +169,13 @@
   const dialogMessage = ref<string>()
   const importRecords = ref<string[]>([])
   const dateFormats = [
-    { value: 'YYYY-MM-DD', label: 'YYYY-MM-DD' },
     { value: 'MM-DD-YYYY', label: 'MM-DD-YYYY' },
+    { value: 'YYYY-MM-DD', label: 'YYYY-MM-DD' },
   ]
-  const fieldPositions = [
-    { value: 1, label: '1' },
-    { value: 2, label: '2' },
-    { value: 3, label: '3' },
-    { value: 4, label: '4' },
-    { value: 5, label: '5' },
-    { value: 6, label: '6' },
-    { value: 7, label: '7' },
-    { value: 8, label: '8' },
-    { value: 9, label: '9' },
-    { value: 10, label: '10' },
-  ]
+  const fieldPositions = [...Array(10).keys()].map((i) => ({
+    value: i + 1,
+    label: (i + 1).toString(),
+  }))
 
   const { showDialog } = useDialog()
 
@@ -190,136 +189,129 @@
   })
 
   // Retrieve the category list
-  let categoriesQuery: ComputedRef<QueryResponse<Category[]>>
-  try {
-    categoriesQuery = useCategories()
-    initialized.value = true
-  } catch (error) {
-    dialogMessage.value =
-      'Error retrieving categories, import can continue but ' +
-      'categories/subcategory will not be added to imported expenses'
-  }
+  let categoriesQuery = useCategories()
 
   // Import the expenses from the CSV file
   async function importExpenses() {
     dialogMessage.value = undefined
     const expenses: Expense[] = []
 
-    // Validate the form fields before importing
-    // if (!this.$refs.form.validate()) {
-    //   return
-    // }
+    form.value?.validate().then(async (success) => {
+      if (success) {
+        // Read the records from the import file
+        try {
+          importRecords.value = await readImportFile()
+        } catch (error) {
+          console.error('Error importing file:', error)
+          dialogMessage.value = 'Unable to import the file'
+        }
 
-    // Read the records from the import file
-    try {
-      importRecords.value = await readImportFile()
-    } catch (error) {
-      console.error('Error importing file:', error)
-      dialogMessage.value = 'Unable to import the file'
-    }
+        if (!importRecords.value.length) {
+          dialogMessage.value = 'No records to import'
+          return
+        }
 
-    if (!importRecords.value.length) {
-      dialogMessage.value = 'No records to import'
-      return
-    }
+        // Parse out the first record of the file for the confirmation dialog
+        const parsedExpense: Expense | undefined = getExpenseObject(
+          importRecords.value[fileStructure.hasHeaderRow ? 1 : 0],
+          false
+        )
+        if (parsedExpense) {
+          // Create the confirmation message and ask the user to confirm the import record parsing
+          const msg =
+            '<div>Parsed fields from the first record are displayed below.' +
+            ' Are you sure you want to continue the import?</div>' +
+            '<br/>' +
+            "<div><label style='font-weight: bold;'>Date: </label><span>" +
+            `${parsedExpense.trxDate}</span></div>` +
+            '<div>' +
+            '  <label style="font-weight: bold;">Amount: </label>' +
+            `  <span>${parsedExpense.amount}</span>` +
+            '</div>' +
+            '<div>' +
+            '  <label style="font-weight: bold;">Desc: </label>' +
+            `  <span>${parsedExpense.description}</span>` +
+            '</div>'
 
-    // Parse out the first record of the file for the confirmation dialog
-    const parsedExpense: Expense | undefined = getExpenseObject(
-      importRecords[fileStructure.hasHeaderRow ? 1 : 0],
-      false
-    )
-    if (parsedExpense) {
-      // Create the confirmation message and ask the user to confirm the import record parsing
-      const msg =
-        `${
-          '<div>Parsed fields from the first record are displayed below.' +
-          ' Are you sure you want to continue the import?</div>' +
-          '<br/>' +
-          "<div><label style='font-weight: bold;'>Date: </label><span>"
-        }${parsedExpense.trxDate}</span></div>` +
-        '<div>' +
-        '  <label style="font-weight: bold;">Amount: </label>' +
-        `  <span>${parsedExpense.amount}</span>` +
-        '</div>' +
-        '<div>' +
-        '  <label style="font-weight: bold;">Desc: </label>' +
-        `  <span>${parsedExpense.description}</span>` +
-        '</div>'
-
-      // Confirm the import
-      /*
-        showDialog({
-          title: 'Confirm Import',
-          message: msg,
-        }).onOk(async () => {
-          // Create expense objects for each import file record
-          importRecords.value.forEach((rec, idx) => {
-            if (!fileStructure.hasHeaderRow || idx > 0) {
-              const exp = getExpenseObject(rec)
-              if (exp) {
-                expenses.push(exp)
+          // Confirm the import
+          showDialog({
+            title: 'Confirm Import',
+            message: msg,
+          }).onOk(async () => {
+            // Create expense objects for each import file record
+            importRecords.value.forEach((rec, idx) => {
+              if (!fileStructure.hasHeaderRow || idx > 0) {
+                const exp = getExpenseObject(rec)
+                if (exp) {
+                  expenses.push(exp)
+                }
               }
+            })
+
+            // Create an import details summary object
+            const importDetails: ImportDetails = {
+              importDate: dayjs().format('YYYY-MM-DD'),
+              fileName: fileInfo.csvFile?.value?.name ?? '',
+              description: fileInfo.description.value!,
+              recordCount: expenses.length,
+            }
+
+            // Save the expenses and the import details
+            try {
+              await ExpenseService.importExpenses(expenses, importDetails)
+              emit('file-imported')
+              // Close the dialog
+              close()
+            } catch (error) {
+              console.error('Error importing expenses:', error)
+              dialogMessage.value = 'Error importing expenses'
             }
           })
-
-          // Create an import details summary object
-          const importDetails: ImportDetails = {
-            importDate: dayjs().format('YYYY-MM-DD'),
-            fileName: fileInfo.csvFile.value?.name ?? '',
-            description: fileInfo.description?.value,
-            recordCount: expenses.length,
-          }
-
-          // Store the expenses and the import details in the db
-          try {
-            await ExpenseService.importExpenses(expenses, importDetails)
-            emit('file-imported')
-            // Close the dialog
-            close()
-          } catch (error) {
-            console.error('Error importing expenses:', error)
-            dialogMessage.value = 'Error importing expenses'
-          }
-        })
-        */
-    } else {
-      dialogMessage.value = 'Unable to parse first import file record'
-    }
+        } else {
+          dialogMessage.value = 'Unable to parse first import file record'
+        }
+      }
+    })
   }
 
   // Read the records from the CSV file
-  function readImportFile(): Promise<string[]> {
-    /*
-    return new Promise((resolve, reject) => {
-      const fileReader: FileReader = new FileReader()
-      fileReader.onload = () => {
-        const records = (fileReader.result as string)?.split('\n')
-        if (records[records.length - 1].length === 0) {
-          records.pop()
-        }
-        resolve(records)
-      }
-      fileReader.onerror = () => {
-        console.error(`Unable to read import file: ${fileReader.error}`)
-        reject(`Unable to read import file: ${fileReader.error}`)
-      }
-      fileReader.readAsText(fileInfo.csvFile.value)
-    })
-    */
+  async function readImportFile(): Promise<string[]> {
+    // return new Promise((resolve, reject) => {
+    //   const fileReader: FileReader = new FileReader()
+    //   fileReader.onload = () => {
+    //     const records = (fileReader.result as string)?.split('\n')
+    //     if (records[records.length - 1].length === 0) {
+    //       records.pop()
+    //     }
+    //     resolve(records)
+    //   }
+    //   fileReader.onerror = () => {
+    //     console.error(`Unable to read import file: ${fileReader.error}`)
+    //     reject(`Unable to read import file: ${fileReader.error}`)
+    //   }
+    //   fileReader.readAsText(fileInfo.csvFile.value!)
+    // })
+
+    const blob: Blob = new Blob([fileInfo.csvFile.value!])
+    const fileData = await blob.text()
+    const records = fileData.split('\n')
+    if (records[records.length - 1].length === 0) {
+      records.pop()
+    }
+    return records
   }
 
   // Convert the CSV record into an Expense object
-  function getExpenseObject(record, validate = true) {
+  function getExpenseObject(record: string, validate = true) {
     const fields = record.split(',')
     if (!fields.length) {
       return undefined
     }
 
     const expense = normalizeExpense(fields)
-
-    // if (validate && !validate(expense)) {
-    //   return undefined
-    // }
+    if (validate && !validateExpense(expense)) {
+      return undefined
+    }
 
     // Set the expense categoryId and subcategoryId if the expense description
     // matches a subcategory matchText
@@ -345,16 +337,16 @@
   }
 
   // Copy the CSV record fields into an expense object and then normalize some of the data
-  function normalizeExpense(fields) {
+  function normalizeExpense(fields: string[]) {
     const expense: Expense = {
-      trxDate: fields[fileStructure.dateFormatField.value - 1],
-      description: fields[fileStructure.descriptionField.value - 1],
+      trxDate: fields[fileStructure.dateFormatField.value! - 1],
+      description: fields[fileStructure.descriptionField.value! - 1],
       amount: 0,
       categoryId: undefined,
       subcategoryId: undefined,
     }
 
-    let rawAmount: number | string = fields[fileStructure.amountField.value - 1]
+    let rawAmount: number | string = fields[fileStructure.amountField.value! - 1]
 
     // Remove quotation marks from fields
     if (typeof expense.trxDate === 'string') {
@@ -382,7 +374,7 @@
     expense.amount = Number(rawAmount)
 
     // Ensure expense amounts are positive
-    if (fileInfo.negativeExpenses) {
+    if (fileInfo.negativeExpenses.value) {
       expense.amount *= -1
     }
 
@@ -390,11 +382,11 @@
   }
 
   // Validate the expense object
-  function validate(expense: Expense) {
+  function validateExpense(expense: Expense) {
     if (!isValidAmount(expense.amount)) {
       return false
     }
-    if (!isValidDate(expense.trxDate, fileInfo.dateFormat)) {
+    if (!isValidDate(expense.trxDate, fileInfo.dateFormat.value!)) {
       return false
     }
     return true
@@ -410,7 +402,7 @@
   }
 
   // Determine if a date value is valid
-  function isValidDate(value, dateFormat: string) {
+  function isValidDate(value: string, dateFormat: string) {
     if (!dayjs(value, dateFormat)) {
       console.error('Invalid date:', value, 'format:', dateFormat)
       return false

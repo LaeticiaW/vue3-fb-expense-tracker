@@ -23,7 +23,7 @@ export type ImportDetails = {
 }
 
 export type ImportFileInfo = {
-  csvFile?: Ref<File | undefined>
+  csvFile: Ref<File | undefined>
   dateFormat: Ref<string | undefined>
   negativeExpenses: Ref<boolean>
   description: Ref<string | undefined>

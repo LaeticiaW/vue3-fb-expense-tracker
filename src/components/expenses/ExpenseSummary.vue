@@ -32,9 +32,9 @@
         :table-columns="tableColumns"
         row-key="categoryId"
         :row-text="rowText"
+        :expanded="expandedKeys"
         footer-label="Total Amount"
         :footer-value="totalExpensesAmount"
-        @row-click="rowClicked"
       >
         <template #header="props">
           <q-tr :props="props">
@@ -91,7 +91,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, computed, ComputedRef } from 'vue'
+  import { ref, computed } from 'vue'
   import TableFilter from '@/components/common/TableFilter.vue'
   import DateRangeInput from '@/components/common/DateRangeInput.vue'
   import ExpenseSummaryGridItem from '@/components/expenses/ExpenseSummaryGridItem.vue'
@@ -99,8 +99,7 @@
   import PageHeader from '@/components/common/PageHeader.vue'
   import PageError from '@/components/common/PageError.vue'
   import CategorySelect from '@/components/common/CategorySelect.vue'
-  import { useNotify } from '@/hooks/useNotify'
-  import { ExpenseFilter, ExpenseSummary, ExpenseTotal } from '@/types/expense'
+  import { ExpenseFilter, ExpenseTotal } from '@/types/expense'
   import useCategorySelect from '@/hooks/data/useCategorySelect'
   import useExpenseTotals from '@/hooks/data/useExpenseTotals'
   import { QTableColumn } from 'quasar'
@@ -112,6 +111,8 @@
     endDate: ref(dayjs().format('YYYY-MM-DD')),
     categoryIds: ref<string[]>([]),
   }
+
+  const expandedKeys = ref<string[]>([])
 
   const tableColumns: QTableColumn<ExpenseTotal>[] = [
     {
@@ -139,7 +140,6 @@
     },
   ]
 
-  const { showNotify } = useNotify()
   const { queryLoading } = useLoading()
 
   // Retrieve the expense totals and select category data
@@ -164,19 +164,6 @@
     )
     return value.toFixed(2)
   })
-
-  // Collapse expanded rows whenever new data is retrieved, put in watch?  computed?
-  // expanded.value.shift()
-
-  // Handle manually expanding/collapsing rows on row click (vs expand icon click)
-  function rowClicked(item: ExpenseSummary) {
-    // if (expanded.value.length && expanded.value[0] === item) {
-    //   expanded.value.shift()
-    // } else {
-    //   expanded.value.shift()
-    //   expanded.value.push(item)
-    // }
-  }
 </script>
 
 <style lang="scss" scoped>
@@ -215,7 +202,7 @@
       margin-top: 4px;
     }
     :deep(.table-container) {
-      max-height: calc(100vh - 200px) !important;
+      max-height: calc(100vh - 220px) !important;
     }
   }
 </style>

@@ -23,7 +23,7 @@
             color="primary"
             size="sm"
             class="import-expenses-btn q-ml-sm"
-            @click="openImportDialog"
+            @click="showImportDialog = true"
           />
         </template>
       </TableFilter>
@@ -45,9 +45,7 @@
         </template>
 
         <template #item="props">
-          <!--
-          <ExpenseGridItem :item-props="props" />
-          -->
+          <ImportGridItem :item-props="props" @delete="deleteImportedExpenses" />
         </template>
       </Table>
     </div>
@@ -69,6 +67,7 @@
   import DateRangeInput from '@/components/common/DateRangeInput.vue'
   import PageHeader from '@/components/common/PageHeader.vue'
   import PageError from '@/components/common/PageError.vue'
+  import ImportGridItem from '@/components/imports/ImportGridItem.vue'
   import { useNotify } from '@/hooks/useNotify'
   import { useDialog } from '@/hooks/useDialog'
   import { useLoading } from '@/hooks/useLoading'
@@ -132,9 +131,5 @@
         showNotify({ message: 'Error deleting imported expenses' })
       }
     })
-  }
-
-  function openImportDialog() {
-    showImportDialog.value = true
   }
 </script>

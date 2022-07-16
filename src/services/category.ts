@@ -1,5 +1,5 @@
-import { db, query, doc, getDocs, setDoc, deleteDoc, collection, Query } from '@/firebase/firebase'
-import { Category, Subcategory } from '@/types/category'
+import { db, query, doc, getDocs, setDoc, deleteDoc, collection } from '@/firebase/firebase'
+import { Category } from '@/types/category'
 import { v4 as uuidv4 } from 'uuid'
 
 export default {

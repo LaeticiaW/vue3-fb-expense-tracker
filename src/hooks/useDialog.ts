@@ -8,6 +8,7 @@ export function useDialog(): { showDialog: (options: QDialogOptions) => DialogCh
       title: 'Confirm',
       cancel: true,
       persistent: true,
+      html: true,
       ...options,
     })
   }

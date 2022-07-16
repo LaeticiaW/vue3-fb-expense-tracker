@@ -8,7 +8,7 @@
       <q-separator />
 
       <q-card-section>
-        <q-form ref="form" v-model="isFormValid" greedy>
+        <q-form ref="form" greedy>
           <div v-if="dialogMessage" class="text-negative q-pb-md">
             {{ dialogMessage }}
           </div>
@@ -128,7 +128,6 @@
 
   const form = ref<QForm | null>(null)
   const trxDateMenuRef = ref<QMenu | null>(null)
-  const isFormValid = ref(false)
   const tempExpense = ref<Expense>(cloneDeep(props.expense))
   const dialogMessage = ref('')
 
