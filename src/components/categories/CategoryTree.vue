@@ -52,7 +52,7 @@
         >
           <template #default-header="prop">
             <div
-              class="row items-center justify-between"
+              class="row items-center justify-between cursor-pointer"
               :class="{ selected: isSelected(prop.node) }"
               style="width: 100%"
               @click="onSelected(prop.node)"
