@@ -43,7 +43,7 @@ Install npm packages
 yarn install
 ```
 
-Start the client web app in development mode, and then display in browser at http://localhost:8080
+Start the client web app in development mode, and then display in browser at http://localhost:3000
 
 ```shell
 yarn dev
