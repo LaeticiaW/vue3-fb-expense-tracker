@@ -6,7 +6,7 @@
 
 ## WebApp Description
 
-The vue-fb-expense-tracker application allows users to enter and report on their expenses.
+The vue3-fb-expense-tracker application allows users to enter and report on their expenses.
 
 - There are 5 main menu options: Dashboard, Categories, Manage Expenses, Expense Summary, and Imports.
 - The Dashboard page displays a pie chart showing expenses by category and a time series chart showing category expenses over time.
@@ -51,5 +51,5 @@ yarn dev
 
 Notes about the Web App:
 
-- To test out the Import Expenses feature, there is a sampleImportData.csv file in the vue-expense-tracker-server/database directory. It loads records for the month of May 2022. (In the Import Dialog, use date format MM-DD-YYYY, date position 1, amt position 2, description position 5)
+- To test out the Import Expenses feature, there is a sampleImportData.csv file in the vue3-fb-expense-tracker-server/database directory. It loads records for the month of May 2022. (In the Import Dialog, use date format MM-DD-YYYY, date position 1, amt position 2, description position 5)
 - When filtering expense data in the app, note that the sample data expense dates are all from Jan to Apr/May 2022
