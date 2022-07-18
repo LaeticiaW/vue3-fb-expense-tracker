@@ -1,16 +1,55 @@
-# Vue 3 + TypeScript + Vite
+# vue-fb-expense-tracker
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+![ScreenShot](src/assets/screenshot-dashboard.png)
+![ScreenShot](src/assets/screenshot-expenses.png)
+![ScreenShot](src/assets/screenshot-categories.png)
 
-## Recommended IDE Setup
+## WebApp Description
 
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar)
+The vue-fb-expense-tracker application allows users to enter and report on their expenses.
 
-## Type Support For `.vue` Imports in TS
+- There are 5 main menu options: Dashboard, Categories, Manage Expenses, Expense Summary, and Imports.
+- The Dashboard page displays a pie chart showing expenses by category and a time series chart showing category expenses over time.
+- The Categories page allows users to View, Add, Update, and Delete categories and subcategories.
+- The Manage Expenses page allows users to view/filter, add, update, and delete expenses, as well as assigning expenses to categories and subcategories
+- The Expense Summary page allows users to summarize expenses by date and category.
+- The Import Expenses page allows importing expense transactions from a CSV file that contains the following fields: trxDate, amount, description. The import process will automatically set category and subcategory values for expenses if there are any category mappings that match.
 
-Since TypeScript cannot handle type information for `.vue` imports, they are shimmed to be a generic Vue component type by default. In most cases this is fine if you don't really care about component prop types outside of templates. However, if you wish to get actual prop types in `.vue` imports (for example to get props validation when using manual `h(...)` calls), you can enable Volar's Take Over mode by following these steps:
+## Tech Stack
 
-1. Run `Extensions: Show Built-in Extensions` from VS Code's command palette, look for `TypeScript and JavaScript Language Features`, then right click and select `Disable (Workspace)`. By default, Take Over mode will enable itself if the default TypeScript extension is disabled.
-2. Reload the VS Code window by running `Developer: Reload Window` from the command palette.
+The web application is written in Typescript, Vue 3, Quasar, and Highcharts. It uses Firestore for the database
 
-You can learn more about Take Over mode [here](https://github.com/johnsoncodehk/volar/discussions/471).
+## Dependencies
+
+- Node and yarn
+
+## Install and run the Vue 3 Expense Tracker web app in Developer mode
+
+Clone the vue3-fb-expense-tracker code
+
+```shell
+git clone https://github.com/LaeticiaW/vue3-fb-expense-tracker.git
+```
+
+Change to app directory
+
+```shell
+cd vue3-fb-expense-tracker
+```
+
+Install npm packages
+
+```shell
+yarn install
+```
+
+Start the client web app in development mode, and then display in browser at http://localhost:8080
+
+```shell
+yarn dev
+```
+
+Notes about the Web App:
+
+- To test out the Import Expenses feature, there is a sampleImportData.csv file in the vue-expense-tracker-server/database directory. It loads records for the month of May 2022. (In the Import Dialog, use date format MM-DD-YYYY, date position 1, amt position 2, description position 5)
+- When filtering expense data in the app, note that the sample data expense dates are all from Jan to Apr/May 2022
