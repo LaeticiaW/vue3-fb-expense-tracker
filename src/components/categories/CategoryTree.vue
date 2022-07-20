@@ -75,7 +75,7 @@
                   round
                   icon="mdi-delete"
                   color="primary"
-                  title="Delete Category"
+                  :title="isSubcategory(prop.node) ? 'Delete Subcategory' : 'Delete Category'"
                   size="12px"
                   class="tree-btn q-ml-sm"
                   @click="deleteItem(prop.node)"

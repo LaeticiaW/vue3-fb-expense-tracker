@@ -23,6 +23,7 @@
             color="primary"
             size="sm"
             class="import-expenses-btn q-ml-sm"
+            title="Import Expenses"
             @click="showImportDialog = true"
           />
         </template>
@@ -39,6 +40,7 @@
               color="primary"
               size="sm"
               class="q-ma-xs"
+              title="Delete Imported Expenses"
               @click="deleteImportedExpenses(props.row)"
             />
           </q-td>

@@ -13,6 +13,7 @@
         flat
         dense
         binary-state-sort
+        data-testid="data-table"
         @row-click="rowClicked"
       >
         <!-- Pass the table slots to the q-table component -->

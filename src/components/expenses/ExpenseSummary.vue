@@ -54,6 +54,7 @@
                 round
                 dense
                 :icon="props.expand ? 'remove' : 'add'"
+                :title="props.expand ? 'Collapse Row' : 'Expand Row'"
                 style="margin-left: 16px"
                 @click="props.expand = !props.expand"
               />

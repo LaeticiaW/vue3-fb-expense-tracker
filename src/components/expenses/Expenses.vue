@@ -31,6 +31,7 @@
             color="primary"
             size="sm"
             class="create-expense-btn q-ml-sm"
+            title="Create New Expense"
             @click="showAddExpenseDialog"
           />
         </template>
@@ -54,6 +55,7 @@
               color="primary"
               size="sm"
               class="a-ma-xs"
+              title="Update Expense"
               @click="updateExpense(props.row)"
             />
             <q-btn
@@ -63,6 +65,7 @@
               color="primary"
               size="sm"
               class="q-ma-xs"
+              title="Delete Expense"
               @click="deleteExpense(props.row)"
             />
           </q-td>

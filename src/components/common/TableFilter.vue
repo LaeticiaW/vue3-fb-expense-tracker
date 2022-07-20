@@ -1,6 +1,6 @@
 <template>
   <!-- Common filter bar containing slots for inputs and actions -->
-  <q-toolbar class="filter bg-secondary rounded-borders q-mb-lg q-py-sm">
+  <q-toolbar class="filter bg-secondary rounded-borders q-mb-lg q-py-sm" data-testid="table-filter">
     <slot name="inputs" />
     <q-space />
     <slot name="actions" />

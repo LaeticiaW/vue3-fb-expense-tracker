@@ -11,6 +11,7 @@
       :option-value="itemValue"
       style="width: 208px"
       :bg-color="bgColor"
+      data-testig="category-select"
       @update:modelValue="onChange"
     >
       <template #selected-item="{ index, opt }">
