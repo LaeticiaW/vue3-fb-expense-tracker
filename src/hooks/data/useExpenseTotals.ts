@@ -2,6 +2,7 @@ import { computed, ComputedRef } from 'vue'
 import { ExpenseTotal, ExpenseFilter } from '@/types/expense'
 import { QueryResponse } from '@/types/query'
 import useExpenses from '@/hooks/data/useExpenses'
+import { cloneDeep } from 'lodash'
 
 /*
  * Retrieves the expense totals by category
@@ -10,7 +11,7 @@ export default function (filter: ExpenseFilter): ComputedRef<QueryResponse<Expen
   const expensesQuery = useExpenses(filter)
 
   const expenseTotals = computed(() => {
-    const expenses = expensesQuery.value.data
+    const expenses = cloneDeep(expensesQuery.value.data)
 
     // Sort the expense data by category name and subcategory name
     expenses.sort((a, b) => {

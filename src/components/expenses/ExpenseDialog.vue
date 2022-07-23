@@ -121,23 +121,26 @@
 
   const props = defineProps<{
     modelValue: boolean
-    expense: Expense
+    expense?: Expense
   }>()
 
   const emit = defineEmits(['update:modelValue', 'expense-updated'])
 
   const form = ref<QForm | null>(null)
   const trxDateMenuRef = ref<QMenu | null>(null)
-  const tempExpense = ref<Expense>(cloneDeep(props.expense))
+  const tempExpense = ref<Partial<Expense>>({})
   const dialogMessage = ref('')
 
-  if (tempExpense.value.trxDate) {
-    tempExpense.value.trxDate = dayjs(tempExpense.value.trxDate).format('YYYY-MM-DD')
+  if (props.expense) {
+    tempExpense.value = cloneDeep(props.expense)
+    if (tempExpense.value?.trxDate) {
+      tempExpense.value.trxDate = dayjs(tempExpense.value.trxDate).format('YYYY-MM-DD')
+    }
   }
 
   const dialogTitle = computed(() => {
-    if (!props.expense.id) {
-      return 'Add Expense'
+    if (!props.expense?.id) {
+      return 'Create Expense'
     }
     return 'Update Expense'
   })
@@ -199,13 +202,15 @@
         }
 
         try {
-          await ExpenseService.saveExpense(tempExpense.value)
+          await ExpenseService.saveExpense(tempExpense.value as Expense)
           emit('expense-updated', tempExpense)
           // Close the dialog
           close()
         } catch (error) {
           dialogMessage.value = 'Error saving the expense'
         }
+      } else {
+        dialogMessage.value = 'Invalid form data'
       }
     })
   }

@@ -3,7 +3,6 @@ import vue from '@vitejs/plugin-vue'
 import { quasar } from '@quasar/vite-plugin'
 import { resolve } from 'path'
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     vue(),
@@ -23,6 +22,7 @@ export default defineConfig({
       sass: {},
     },
   },
+
   /* remove the need to specify .vue files https://vitejs.dev/config/#resolve-extensions
   resolve: {
     extensions: [

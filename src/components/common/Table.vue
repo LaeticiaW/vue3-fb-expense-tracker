@@ -23,7 +23,7 @@
       </q-table>
     </div>
 
-    <div class="table-footer row">
+    <div class="table-footer row" data-testid="table-footer">
       <span>{{ tableRows.length }} {{ rowText }}</span>
       <q-space />
       <span v-if="footerLabel">{{ footerLabel }}: {{ footerValue }}</span>

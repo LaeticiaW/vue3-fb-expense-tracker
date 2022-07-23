@@ -31,7 +31,7 @@
             color="primary"
             size="sm"
             class="create-expense-btn q-ml-sm"
-            title="Create New Expense"
+            title="Create Expense"
             @click="showAddExpenseDialog"
           />
         </template>
@@ -134,7 +134,7 @@
       align: 'right',
       sortable: true,
       sort: (a, b) => parseInt(a, 10) - parseInt(b, 10),
-      format: (val) => val.toFixed(2),
+      format: (val) => (typeof val === 'number' ? val.toFixed(2) : val),
     },
     { name: 'actions', label: 'Actions', field: 'id', align: 'left' },
   ]
