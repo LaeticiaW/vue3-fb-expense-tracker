@@ -121,6 +121,8 @@ describe('Expenses.vue', () => {
     const table = screen.getByTestId('data-table')
     const columnHeaders = within(table).getAllByRole('columnheader')
 
+    expect(columnHeaders.length).toEqual(6)
+
     within(columnHeaders[0]).getByText('Date')
     within(columnHeaders[1]).getByText('Description')
     within(columnHeaders[2]).getByText('Category')

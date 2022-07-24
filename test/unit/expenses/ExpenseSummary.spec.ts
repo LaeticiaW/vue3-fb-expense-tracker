@@ -119,6 +119,8 @@ describe('ExpenseSummary.vue', () => {
     const table = screen.getByTestId('data-table')
     const columnHeaders = within(table).getAllByRole('columnheader')
 
+    expect(columnHeaders.length).toEqual(4)
+
     within(columnHeaders[0]).getByText('')
     within(columnHeaders[1]).getByText('Category')
     within(columnHeaders[2]).getByText('Percent')

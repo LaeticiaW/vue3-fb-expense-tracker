@@ -1,5 +1,5 @@
 <template>
-  <q-dialog v-model="showDialog">
+  <q-dialog v-model="showDialog" data-testid="exportDialog">
     <q-card class="expense-card">
       <q-toolbar class="bg-primary text-white">
         <q-toolbar-title>{{ dialogTitle }}</q-toolbar-title>

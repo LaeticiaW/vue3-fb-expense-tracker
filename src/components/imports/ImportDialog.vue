@@ -1,5 +1,5 @@
 <template>
-  <q-dialog v-model="showImportDialog">
+  <q-dialog v-model="showImportDialog" data-testid="importDialog">
     <q-card class="import-card">
       <q-toolbar class="bg-primary text-white">
         <q-toolbar-title>Import Expenses</q-toolbar-title>
