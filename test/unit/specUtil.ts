@@ -1,9 +1,9 @@
 /*
  * Spec Utility methods
  */
-
+import { ComponentPublicInstance } from 'vue'
 import { Quasar, Notify, LoadingBar, Dialog } from 'quasar'
-import { render } from '@testing-library/vue'
+import { render, RenderOptions } from '@testing-library/vue'
 import flushPromises from 'flush-promises'
 import { merge } from 'lodash'
 
@@ -14,7 +14,10 @@ const noop = () => {
 Object.defineProperty(window, 'scrollTo', { value: noop, writable: true })
 
 export default {
-  async render(component, options) {
+  /*
+   * Renders a vue component for vue testing library tests with quasar plugins
+   */
+  async render(component: ComponentPublicInstance, options: RenderOptions) {
     const globalPlugins = {
       global: {
         plugins: [[Quasar, { plugins: { Notify, LoadingBar, Dialog } }]],
@@ -23,7 +26,7 @@ export default {
 
     const renderOptions = options ? merge(options, globalPlugins) : globalPlugins
 
-    const result = render(component, renderOptions)
+    const result = render(component, renderOptions as RenderOptions)
 
     await flushPromises()
 
@@ -39,28 +42,14 @@ export default {
    *     const expenseSpy = vi.spyOn(ExpenseService, 'getExpenses')
    *                          .mockImplementation(SpecUtil.getPromiseData(expenses)
    */
-  getPromiseData(data) {
+  getPromiseData(data: any) {
     return function () {
       return Promise.resolve(data)
     }
   },
 
-  getPromiseData2(data) {
-    return function () {
-      return {
-        then(callback) {
-          callback(data)
-
-          return {
-            catch() {},
-          }
-        },
-      }
-    }
-  },
-
   /*
-   * Generic function to use with jest.spyOn when the method returns a rejected promise
+   * Generic function to use with vi.spyOn when the method returns a rejected promise
    */
   rejectPromise() {
     const response = {
@@ -71,21 +60,6 @@ export default {
 
     return function () {
       return Promise.reject(response)
-    }
-  },
-
-  // Remove transition styles to prevent delay that breaks tests
-  // vue-test-utils: https://github.com/vuejs/vue-test-utils/issues/839
-  stubTransitions() {
-    const { getComputedStyle } = window
-    window.getComputedStyle = function getComputedStyleStub(el) {
-      return {
-        ...getComputedStyle(el),
-        transitionDelay: '',
-        transitionDuration: '',
-        animationDelay: '',
-        animationDuration: '',
-      }
     }
   },
 }

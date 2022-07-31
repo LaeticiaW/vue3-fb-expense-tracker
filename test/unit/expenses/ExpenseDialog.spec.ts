@@ -145,7 +145,7 @@ describe('ExpenseDialog.vue', () => {
     // Verify the saveExpenses service method was called
     expect(saveSpy).toHaveBeenCalled()
 
-    // Verify expense-updated event was emitted withthe updated expense param, and
+    // Verify expense-updated event was emitted with the updated expense param, and
     // the update:modelValue event was emitted to close the dialog
     expect(emitted()['expense-updated'].length).toEqual(1)
     expect(emitted()['expense-updated'][0][0].value).toEqual(

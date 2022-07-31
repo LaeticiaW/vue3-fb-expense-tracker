@@ -42,4 +42,9 @@
     background-color: $primary;
     color: #ffffff;
   }
+
+  // Quasar input field
+  .q-field__native {
+    cursor: pointer !important;
+  }
 </style>

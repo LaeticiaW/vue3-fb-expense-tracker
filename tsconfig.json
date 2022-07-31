@@ -20,6 +20,12 @@
     "typeRoots": ["./node-modules/@types", "./types"],
     "noImplicitAny": false
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "test/unit/**/*.spec.ts"
+  ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
